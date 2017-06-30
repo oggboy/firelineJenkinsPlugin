@@ -1,0 +1,26 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <!--
+    This jelly script is used for per-project configuration.
+
+    See global.jelly for a general discussion about jelly script.
+  -->
+
+  <!--
+    Creates a text field that shows the value of the "name" property.
+    When submitted, it will be passed to the corresponding constructor parameter.
+ 
+  <f:entry title="扫描结果报告路径" field="reportPath" >
+   <f:textbox default="${descriptor.defaultReportPath()}"/>
+  </f:entry>
+ -->
+  
+  <f:entry title="扫描结果报告文件名" field="reportPath">
+    <f:textbox default="${descriptor.defaultReportPath()}"/>
+  </f:entry>
+ 
+    <f:entry title="规则配置文件" field="configuration"
+    	description="规则配置文件，如**/RedLineConfigurationNoLog.xml。可以通过该配置文件控制FireLine扫描规则类型，为空时默认扫描所有类型的规则。访问http://magic.360.cn/查看更多详情。">
+    	<f:textbox />
+  	</f:entry>
+</j:jelly>
