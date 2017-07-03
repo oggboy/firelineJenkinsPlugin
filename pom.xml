@@ -10,7 +10,7 @@
     <relativePath/>
   </parent>
   <groupId>com.qihoo</groupId>
-  <artifactId>firelineplugin</artifactId>
+  <artifactId>fireline</artifactId>
   <version>1.0</version>
   <packaging>hpi</packaging>
 
