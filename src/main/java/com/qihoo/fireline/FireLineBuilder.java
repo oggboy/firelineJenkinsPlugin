@@ -15,7 +15,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-import com.sun.security.auth.login.ConfigFile;
+import java.net.URL;
 
 import org.kohsuke.stapler.QueryParameter;
 
@@ -45,7 +45,8 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private final String configuration;
 	private final String reportPath;
 	private String output;
-	private static String jarFile = "/plugins/firelineplugin/WEB-INF/lib/fireline.jar";
+	private static String jarFile = "/com/qihoo/fireline/jar/fireline.jar";
+	
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -58,6 +59,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	/**
 	 * We'll use this from the {@code config.jelly}.
 	 */
+	/**
+	 * @return
+	 */
 	public String getConfiguration() {
 		return configuration;
 	}
@@ -66,7 +70,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
 			throws InterruptedException, IOException {
 		String projectPath = workspace.getRemote();
-		String jarPath = getFireLineJar(build, workspace);
+		String jarPath=null;
+//		jarPath = getFireLineJar(build, workspace);
+		jarPath=new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
 		// check params
 		if (!getDescriptor().existFile(projectPath))
 			listener.getLogger().println("您扫描的项目路径不正确。");
@@ -76,10 +82,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 
 		String cmd = "java -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
 
-		// listener.getLogger().println("build.getRootDir()=" +
-		// build.getRootDir().getPath());
-		// listener.getLogger().println("jarPath= " +jarPath);
-		// listener.getLogger().println("cmd= " + cmd);
+//		 listener.getLogger().println("workspace.getRemote()=" + workspace.getRemote());
+//		 listener.getLogger().println("jarPath= " +jarPath);
+//		 listener.getLogger().println("cmd= " + cmd);
 		File report = new File(reportPath);
 		if (report.exists()) {
 			deleteAllFilesOfDir(report);
@@ -198,10 +203,11 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		/**
 		 * Performs on-the-fly validation of the form field 'configuration'.
 		 *
-		 * @param config
+		 * @param value
 		 *            This parameter receives the value that the user has typed.
 		 * @return Indicates the outcome of the validation. This is sent to the
 		 *         browser.
+		 *         
 		 *         <p>
 		 *         Note that returning {@link FormValidation#error(String)} does
 		 *         not prevent the form from being saved. It just means that a
