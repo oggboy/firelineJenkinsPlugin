@@ -1,0 +1,7 @@
+<?jelly escape-by-default='true'?>
+<!--
+  This view is used to render the installed plugins page.
+-->
+<div>
+  This plug-in generates the trend report for FireLine, an static code analysis program.
+</div>
