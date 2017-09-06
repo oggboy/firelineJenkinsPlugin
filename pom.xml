@@ -9,7 +9,7 @@
 		<version>2.29</version>
 		<relativePath />
 	</parent>
-	<groupId>com.qihoo</groupId>
+	<groupId>com.qihoo.jenkins.plugins</groupId>
 	<artifactId>fireline</artifactId>
 	<version>1.0</version>
 	<packaging>hpi</packaging>
