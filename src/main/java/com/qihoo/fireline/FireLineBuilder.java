@@ -68,7 +68,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 
 	@Override
 	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
-			throws InterruptedException, IOException {
+			throws InterruptedException {
 		String projectPath = workspace.getRemote();
 		String jarPath=null;
 //		jarPath = getFireLineJar(build, workspace);
@@ -89,7 +89,11 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		if (report.exists()) {
 			deleteAllFilesOfDir(report);
 		} else {
-			report.mkdir();
+			try{
+				report.mkdir();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 		if (!getDescriptor().getIsSelected() && configuration != null) {
 			File conf = new File(configuration);
@@ -116,11 +120,18 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	}
 
 	private void deleteAllFilesOfDir(File path) {
-		if (!path.exists())
+		if (path==null) {
 			return;
-		if (path.isFile()) {
-			path.delete();
-			return;
+		}
+		try{
+			if (!path.exists())
+				return;
+			if (path.isFile()) {
+				path.delete();
+				return;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		File[] files = path.listFiles();
 		for (int i = 0; i < files.length; i++) {
@@ -133,7 +144,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		BufferedReader br = null;
 		try {
 			Process p = Runtime.getRuntime().exec(commandStr);
-			br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			br = new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF-8"));
 			String line = null;
 			StringBuilder sb = new StringBuilder();
 			while ((line = br.readLine()) != null) {
@@ -275,8 +286,13 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 
 		public String defaultReportPath() {
 			File report=new File(System.getProperty("user.home") + "/report");
-			if (!report.exists()) {
-				report.mkdir();
+			try {
+				if (!report.exists()) {
+					report.mkdir();
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
 			}
 			return report.getPath();
 		}
