@@ -9,7 +9,7 @@
 		<version>2.29</version>
 		<relativePath />
 	</parent>
-	<groupId>com.qihoo</groupId>
+	<groupId>com.qihoo.jenkins.plugins</groupId>
 	<artifactId>fireline</artifactId>
 	<version>1.0</version>
 	<packaging>hpi</packaging>
@@ -44,8 +44,8 @@
 
 	<developers>
 		<developer>
-			<id>weihao</id>
-			<name>Wei hao</name>
+			<id>AnneWei</id>
+			<name>AnneWei</name>
 			<email>1272458116@qq.com</email>
 		</developer>
 	</developers>
