@@ -127,15 +127,22 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			if (!path.exists())
 				return;
 			if (path.isFile()) {
-				path.delete();
+				try {
+					path.delete();
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
 				return;
 			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		File[] files = path.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			deleteAllFilesOfDir(files[i]);
+		if (files!=null) {
+			for (int i = 0; i < files.length; i++) {
+				deleteAllFilesOfDir(files[i]);
+			}
 		}
 		// path.delete();
 	}
@@ -288,7 +295,12 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			File report=new File(System.getProperty("user.home") + "/report");
 			try {
 				if (!report.exists()) {
-					report.mkdir();
+					try {
+						
+						report.mkdir();
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
 				}
 			} catch (Exception e) {
 				// TODO: handle exception
