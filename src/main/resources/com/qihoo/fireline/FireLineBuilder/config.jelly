@@ -15,12 +15,12 @@
   </f:entry>
  -->
   
-  <f:entry title="扫描结果报告文件名" field="reportPath">
+  <f:entry title="结果报告路径或文件名:&lt;br / &gt;(Report path or filename)" field="reportPath">
     <f:textbox default="${descriptor.defaultReportPath()}"/>
   </f:entry>
  
-    <f:entry title="规则配置文件" field="configuration"
-    	description="规则配置文件，如**/RedLineConfigurationNoLog.xml。可以通过该配置文件控制FireLine扫描规则类型，为空时默认扫描所有类型的规则。访问http://magic.360.cn/查看更多详情。">
+    <f:entry title="规则配置文件:&lt;br / &gt;(Rule configuration file)" field="configuration"
+    	description="规则配置文件，如**/RedLineConfigurationNoLog.xml。可以通过该配置文件控制FireLine扫描规则类型，为空时默认扫描所有类型的规则。访问http://magic.360.cn/查看更多详情。&lt;br / &gt;&lt;br / &gt;(Rule configuration file, for example, **/RedLineConfigurationNoLog.xml, which can filter rules according to your demands. More detail, http://magic.360.cn/)">
     	<f:textbox />
   	</f:entry>
 </j:jelly>

@@ -14,8 +14,8 @@
   -->
  
   <f:section title="FireLine global configuration">
-    <f:entry title="规则配置文件" field="isSelected" description="是否使用规则配置文件。">
-      <f:checkbox title="不使用"/>
+    <f:entry title="规则配置文件:&lt;br / &gt;(Rule configuration file)" field="isSelected" description="是否使用规则配置文件。&lt;br / &gt;(Whether to use the rule configuration file. )">
+      <f:checkbox title="不使用/Disable"/>
     </f:entry>
   </f:section>
  
