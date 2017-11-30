@@ -37,7 +37,8 @@ public class JarCopy {
 		}
 		
 		if (d.exists()) {
-			d.delete();
+			if(!d.delete())
+				System.out.println("Fail to delete file.");;
 		}
 		InputStream stream = null;
         OutputStream resStreamOut = null;
