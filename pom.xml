@@ -9,7 +9,7 @@
 		<relativePath />
 	</parent>
 	<groupId>org.jenkins-ci.plugins.plugin</groupId>
-	<artifactId>Fireline_Plugin</artifactId>
+	<artifactId>fireline</artifactId>
 	<version>1.4.21-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 

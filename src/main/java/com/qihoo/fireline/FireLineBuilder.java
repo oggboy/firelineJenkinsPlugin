@@ -174,8 +174,8 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		String oldPath = new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
 		
 		int index1=oldPath.indexOf("file:");
-		int index2=oldPath.indexOf("Fireline_Plugin.jar");
-		String newPath= oldPath.substring(index1+6, index2)+"fireline.jar";
+		int index2=oldPath.indexOf("fireline.jar");
+		String newPath= oldPath.substring(index1+6, index2)+"firelineJar.jar";
 		try {
 			JarCopy.copyJarResource(jarFile, newPath);
 		} catch (Exception e) {
