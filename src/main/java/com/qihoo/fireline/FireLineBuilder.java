@@ -15,8 +15,6 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-import java.net.URL;
-
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.servlet.ServletException;
@@ -45,8 +43,8 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private final String configuration;
 	private final String reportPath;
 	private String output;
-	private static String jarFile = "/com/qihoo/fireline/jar/fireline.jar";
-	
+	private static String jarFile = "/lib/fireline.jar";
+	public static String platform = System.getProperty("os.name");
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -71,8 +69,8 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			throws InterruptedException {
 		String projectPath = workspace.getRemote();
 		String jarPath=null;
-//		jarPath = getFireLineJar(build, workspace);
-		jarPath=new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
+		jarPath = getFireLineJar(listener);
+		//jarPath=new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
 		// check params
 		if (!getDescriptor().existFile(projectPath))
 			listener.getLogger().println("您扫描的项目路径不正确。");
@@ -172,16 +170,19 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		}
 	}
 
-	private String getFireLineJar(Run<?, ?> build, FilePath workspace) {
-		String jarPath = null;
-		String workspacePath = build.getRootDir().getPath();
+	private String getFireLineJar(TaskListener listener) {
+		String oldPath = new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
+		
+		int index1=oldPath.indexOf("file:");
+		int index2=oldPath.indexOf("fireline.jar");
+		String newPath= oldPath.substring(index1+6, index2)+"firelineJar.jar";
 		try {
-			int index = workspacePath.indexOf(".jenkins") + ".jenkins".length();
-			jarPath = workspacePath.substring(0, index) + FireLineBuilder.jarFile;
+			JarCopy.copyJarResource(jarFile, newPath);
 		} catch (Exception e) {
+			// TODO 自动生成的 catch 块
 			e.printStackTrace();
 		}
-		return jarPath;
+		return newPath;
 	}
 
 	private boolean checkReportPath(String path) {
