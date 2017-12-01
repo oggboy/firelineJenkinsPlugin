@@ -3,5 +3,5 @@
   This view is used to render the installed plugins page.
 -->
 <div>
-  This plug-in generates the trend report for FireLine, an static code analysis program.
+  FireLine Plugin is a code analysis tool for Android or Java code.It can detect Security and Resource Leak bugs. Alibaba Java Coding Guidelines (P3C) is compatible in recent release. 
 </div>
