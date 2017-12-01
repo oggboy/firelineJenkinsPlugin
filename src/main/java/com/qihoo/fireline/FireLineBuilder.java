@@ -43,7 +43,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private final String configuration;
 	private final String reportPath;
 	private String output;
-	private static String jarFile = "/lib/fireline.jar";
+	private static String jarFile = "/lib/firelineJar.jar";
 	public static String platform = System.getProperty("os.name");
 
 	// Fields in config.jelly must match the parameter names in the
@@ -172,10 +172,11 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 
 	private String getFireLineJar(TaskListener listener) {
 		String oldPath = new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
-		
+//		listener.getLogger().println("oldPath= " +oldPath);
 		int index1=oldPath.indexOf("file:");
 		int index2=oldPath.indexOf("fireline.jar");
 		String newPath= oldPath.substring(index1+6, index2)+"firelineJar.jar";
+//		listener.getLogger().println("newPath= " +newPath);
 		try {
 			JarCopy.copyJarResource(jarFile, newPath);
 		} catch (Exception e) {
