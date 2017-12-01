@@ -28,7 +28,7 @@
 	</properties>
 
 	<name>FireLine Plugin</name>
-	<description>FireLine Plugin,an static code analysis program  to look for bugs in Java code.</description>
+	<description>FireLine Plugin is a code analysis tool for Android or Java code.It can detect Security and Resource Leak bugs. Alibaba Java Coding Guidelines (P3C) is compatible in recent release. </description>
 	<url>https://wiki.jenkins.io/display/JENKINS/FireLine+Plugin</url>
 
 	<!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for 
