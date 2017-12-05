@@ -1,5 +1,4 @@
 package com.qihoo.fireline;
-
 import hudson.Launcher;
 import hudson.Extension;
 import hudson.FilePath;
@@ -16,6 +15,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import org.kohsuke.stapler.QueryParameter;
+
+import com.qihoo.fireline.JarCopy;
 
 import javax.servlet.ServletException;
 
@@ -44,7 +45,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private final String reportPath;
 	private String output;
 	private static String jarFile = "/lib/firelineJar.jar";
-	public static String platform = System.getProperty("os.name");
+	public final static String platform = System.getProperty("os.name");
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -73,13 +74,13 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		//jarPath=new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
 		// check params
 		if (!getDescriptor().existFile(projectPath))
-			listener.getLogger().println("您扫描的项目路径不正确。");
+			listener.getLogger().println("您扫描的项目路径："+projectPath+"不正确。");
 		if (!checkReportPath(reportPath)) {
-			listener.getLogger().println("您的扫描结果报告路径不正确。");
+			listener.getLogger().println("您的扫描结果报告路径："+reportPath+"不正确。");
 		}
 
 		String cmd = "java -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
-
+		//listener.getLogger().println("cmd="+cmd);
 //		 listener.getLogger().println("workspace.getRemote()=" + workspace.getRemote());
 //		 listener.getLogger().println("jarPath= " +jarPath);
 //		 listener.getLogger().println("cmd= " + cmd);
@@ -102,6 +103,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		}
 		if (jarPath != null && new File(jarPath).exists()) {
 			// execute fireline
+			listener.getLogger().println("FireLine start scanning...");
 			exeCmd(cmd);
 			listener.getLogger().println(output);
 			listener.getLogger().println("FireLine report path: " + reportPath);
@@ -171,12 +173,27 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	}
 
 	private String getFireLineJar(TaskListener listener) {
-		String oldPath = new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
-//		listener.getLogger().println("oldPath= " +oldPath);
-		int index1=oldPath.indexOf("file:");
-		int index2=oldPath.indexOf("fireline.jar");
-		String newPath= oldPath.substring(index1+6, index2)+"firelineJar.jar";
-//		listener.getLogger().println("newPath= " +newPath);
+		//listener.getLogger().println("platform= " +platform);
+		//listener.getLogger().println("path1= " +FireLineBuilder.class.getResource(jarFile));
+		//listener.getLogger().println("path2= " +FireLineBuilder.class.getResource(jarFile).getFile());
+		
+		String oldPath=null;
+		String newPath = null;
+		if (platform.contains("Linux")) {
+			oldPath=FireLineBuilder.class.getResource(jarFile).getFile();
+			//listener.getLogger().println("oldPath= " +oldPath);
+			int index1=oldPath.indexOf("file:");
+			int index2=oldPath.indexOf("fireline.jar");
+			newPath= oldPath.substring(index1+5, index2)+"firelineJar.jar";
+			//listener.getLogger().println("newPath= " +newPath);
+		}else {
+			oldPath = new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
+			//listener.getLogger().println("oldPath= " +oldPath);
+			int index1=oldPath.indexOf("file:");
+			int index2=oldPath.indexOf("fireline.jar");
+			newPath= oldPath.substring(index1+6, index2)+"firelineJar.jar";
+			//listener.getLogger().println("newPath= " +newPath);
+		}
 		try {
 			JarCopy.copyJarResource(jarFile, newPath);
 		} catch (Exception e) {
