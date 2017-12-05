@@ -45,7 +45,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private final String reportPath;
 	private String output;
 	private static String jarFile = "/lib/firelineJar.jar";
-	public static String platform = System.getProperty("os.name");
+	public final static String platform = System.getProperty("os.name");
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
