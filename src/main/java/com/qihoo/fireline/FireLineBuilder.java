@@ -64,6 +64,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	public String getConfiguration() {
 		return configuration;
 	}
+	public String getReportPath() {
+		return reportPath;
+	}
 
 	@Override
 	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
@@ -232,7 +235,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		 * If you don't want fields to be persisted, use {@code transient}.
 		 */
 		private boolean isSelected;
-
+		
 		public DescriptorImpl() {
 			load();
 		}
@@ -327,5 +330,6 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			}
 			return report.getPath();
 		}
+		
 	}
 }
