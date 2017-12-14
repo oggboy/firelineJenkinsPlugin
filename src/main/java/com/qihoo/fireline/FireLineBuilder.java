@@ -23,6 +23,7 @@ import javax.servlet.ServletException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
@@ -43,7 +44,7 @@ import java.io.InputStreamReader;
 public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private final String configuration;
 	private final String reportPath;
-	private String output;
+	//private String output;
 	private static String jarFile = "/lib/firelineJar.jar";
 	public final static String platform = System.getProperty("os.name");
 
@@ -72,43 +73,45 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
 			throws InterruptedException {
 		String projectPath = workspace.getRemote();
-		String jarPath=null;
-		jarPath = getFireLineJar(listener);
+		String jarPath=getFireLineJar(listener);
 		//jarPath=new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
 		// check params
 		if (!getDescriptor().existFile(projectPath))
 			listener.getLogger().println("您扫描的项目路径："+projectPath+"不正确。");
-		if (!checkReportPath(reportPath)) {
-			listener.getLogger().println("您的扫描结果报告路径："+reportPath+"不正确。");
-		}
-
-		String cmd = "java -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
+		
+		checkReportPath(reportPath);
+		String cmd = "java -Xms2048m -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
 		//listener.getLogger().println("cmd="+cmd);
 //		 listener.getLogger().println("workspace.getRemote()=" + workspace.getRemote());
 //		 listener.getLogger().println("jarPath= " +jarPath);
 //		 listener.getLogger().println("cmd= " + cmd);
-		File report = new File(reportPath);
-		if (report.exists()) {
-			deleteAllFilesOfDir(report);
-		} else {
-			try{
-				report.mkdir();
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		}
-		if (!getDescriptor().getIsSelected() && configuration != null) {
-			File conf = new File(configuration);
-			if (conf.exists() && !conf.isDirectory())
-				cmd = cmd + " config=" + configuration;
-			else
-				listener.getLogger().println("配置文件未找到。");
-		}
+//		File report = new File(reportPath);
+//		if (report.exists()) {
+//			deleteAllFilesOfDir(report);
+//		} else {
+//			try{
+//				report.mkdir();
+//			}catch(Exception e){
+//				e.printStackTrace();
+//			}
+//		}
+//		if (!getDescriptor().getIsSelected() && configuration != null) {
+//			File conf = new File(configuration);
+//			if (conf.exists() && !conf.isDirectory())
+//				cmd = cmd + " config=" + configuration;
+//			else
+//				listener.getLogger().println("配置文件未找到。");
+//		}
+		
+		//exeCmd("who am i",listener);
+		//exeCmd("java -version",listener);
+		
 		if (jarPath != null && new File(jarPath).exists()) {
 			// execute fireline
 			listener.getLogger().println("FireLine start scanning...");
-			exeCmd(cmd);
-			listener.getLogger().println(output);
+			
+			exeCmd(cmd,listener);
+			//listener.getLogger().println(output);
 			listener.getLogger().println("FireLine report path: " + reportPath);
 		} else
 			listener.getLogger().println("fireline.jar does not exist!!");
@@ -122,55 +125,65 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		return (DescriptorImpl) super.getDescriptor();
 	}
 
-	private void deleteAllFilesOfDir(File path) {
-		if (path==null) {
-			return;
-		}
-		try{
-			if (!path.exists())
-				return;
-			if (path.isFile()) {
-				try {
-					path.delete();
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
-				}
-				return;
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		File[] files = path.listFiles();
-		if (files!=null) {
-			for (int i = 0; i < files.length; i++) {
-				deleteAllFilesOfDir(files[i]);
-			}
-		}
-		// path.delete();
-	}
+//	private void deleteAllFilesOfDir(File path) {
+//		if (path==null) {
+//			return;
+//		}
+//		try{
+//			if (!path.exists())
+//				return;
+//			if (path.isFile()) {
+//				try {
+//					path.delete();
+//				} catch (Exception e) {
+//					// TODO: handle exception
+//					e.printStackTrace();
+//				}
+//				return;
+//			}
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//		File[] files = path.listFiles();
+//		if (files!=null) {
+//			for (int i = 0; i < files.length; i++) {
+//				deleteAllFilesOfDir(files[i]);
+//			}
+//		}
+//		// path.delete();
+//	}
 
-	private void exeCmd(String commandStr) {
-		BufferedReader br = null;
+	private void exeCmd(String commandStr, TaskListener listener) {
+		Process p = null;
 		try {
-			Process p = Runtime.getRuntime().exec(commandStr);
-			br = new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF-8"));
-			String line = null;
-			StringBuilder sb = new StringBuilder();
-			while ((line = br.readLine()) != null) {
-				sb.append(line + "\n");
-			}
-			output = sb.toString();
-			System.out.println(sb.toString());
-		} catch (Exception e) {
+			Runtime rt=Runtime.getRuntime();
+			listener.getLogger().println(commandStr);
+			p = rt.exec(commandStr);
+			listener.getLogger().println("CommandLine output:");
+			StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream(), "ERROR",listener);
+			StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream(), "OUTPUT",listener);  
+			errorGobbler.start();  
+            outputGobbler.start();  
+            int exitVal = p.waitFor(); 
+            System.out.println(exitVal);
+			//br = new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF-8"));
+			//String line = null;
+			//StringBuilder sb = new StringBuilder();		
+			//long start1=System.currentTimeMillis();
+			//while ((line = br.readLine()) != null) {
+				//sb.append(line + "\n");
+//				listener.getLogger().println(line);
+//				listener.getLogger().println("需要 "+(System.currentTimeMillis()-start1)+"毫秒");
+//			}
+			//output = sb.toString();
+			//System.out.println(sb.toString());
+		}catch(RuntimeException e){
+			throw e;
+		}catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			if (p!=null) {
+				p.destroy();
 			}
 		}
 	}
@@ -206,14 +219,18 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		return newPath;
 	}
 
-	private boolean checkReportPath(String path) {
+	private void checkReportPath(String path) {
 		if (path != null && path.length() > 0) {
 			File filePath = new File(path);
-			if (filePath.exists() && filePath.isDirectory())
-				return true;
+			if (filePath.exists() && filePath.isDirectory()){
+				
+			}else {
+				filePath.mkdir();
+			}
 		}
-		return false;
 	}
+	
+
 
 	/**
 	 * Descriptor for {@link FireLineBuilder}. Used as a singleton. The class is
@@ -314,11 +331,10 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		}
 
 		public String defaultReportPath() {
-			File report=new File(System.getProperty("user.home") + "/report");
+			File report=new File(System.getProperty("java.io.tmpdir") + "/report");
 			try {
 				if (!report.exists()) {
 					try {
-						
 						report.mkdir();
 					} catch (Exception e) {
 						// TODO: handle exception
