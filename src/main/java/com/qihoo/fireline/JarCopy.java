@@ -29,7 +29,8 @@ public class JarCopy {
 		File pathFile=new File(d.getParent());
 		if (!pathFile.exists()) {
 			try {
-				pathFile.mkdirs();
+				if(!pathFile.mkdirs())
+					System.out.println("Create Directory Fail,Please Make Sure Your Account Have READ And Write Permission!");
 			} catch (Exception e) {
 				// TODO: handle exception
 				System.out.println("Create Directory Fail,Please Make Sure Your Account Have READ And Write Permission!");
@@ -66,6 +67,7 @@ public class JarCopy {
 					}
 				} catch (Exception e) {
 					// TODO: handle exception
+					e.printStackTrace();
 				}
 	        	if (resStreamOut!=null) {
 	        		resStreamOut.close();
