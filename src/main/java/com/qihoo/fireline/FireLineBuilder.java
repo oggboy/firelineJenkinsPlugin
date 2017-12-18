@@ -106,7 +106,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		//exeCmd("who am i",listener);
 		//exeCmd("java -version",listener);
 		
-		if (jarPath != null && new File(jarPath).exists()) {
+		if (new File(jarPath).exists()) {
 			// execute fireline
 			listener.getLogger().println("FireLine start scanning...");
 			
@@ -219,17 +219,14 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		return newPath;
 	}
 
-	private void checkReportPath(String path) {
+	private boolean checkReportPath(String path) {
 		if (path != null && path.length() > 0) {
 			File filePath = new File(path);
-			if (filePath.exists() && filePath.isDirectory()){
-				
-			}else {
-				filePath.mkdir();
-			}
+			if (filePath.exists() && filePath.isDirectory())
+				return true;
 		}
+		return false;
 	}
-	
 
 
 	/**
@@ -335,9 +332,10 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			try {
 				if (!report.exists()) {
 					try {
-						report.mkdir();
+						if(!report.mkdir())
+							return null;
 					} catch (Exception e) {
-						// TODO: handle exception
+						throw(e);// TODO: handle exception
 					}
 				}
 			} catch (Exception e) {
