@@ -17,6 +17,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.QueryParameter;
 
 import com.qihoo.fireline.JarCopy;
+import com.sun.akuma.JavaVMArguments;
 
 import javax.servlet.ServletException;
 
@@ -73,28 +74,17 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
 			throws InterruptedException {
 		String projectPath = workspace.getRemote();
-		String jarPath=getFireLineJar(listener);
-		//jarPath=new File(FireLineBuilder.class.getResource(jarFile).getFile()).getAbsolutePath();
+		String jarPath=null;
+		jarPath = getFireLineJar(listener);
 		// check params
 		if (!getDescriptor().existFile(projectPath))
 			listener.getLogger().println("您扫描的项目路径："+projectPath+"不正确。");
-		
+		//报告路径不存在时，创建该路径
 		checkReportPath(reportPath);
-		String cmd = "java -Xms2048m -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
-		//listener.getLogger().println("cmd="+cmd);
-//		 listener.getLogger().println("workspace.getRemote()=" + workspace.getRemote());
-//		 listener.getLogger().println("jarPath= " +jarPath);
-//		 listener.getLogger().println("cmd= " + cmd);
-//		File report = new File(reportPath);
-//		if (report.exists()) {
-//			deleteAllFilesOfDir(report);
-//		} else {
-//			try{
-//				report.mkdir();
-//			}catch(Exception e){
-//				e.printStackTrace();
-//			}
-//		}
+		//String jvmString="-Xmx2g";
+		//listener.getLogger().println(getMemUsage());
+		//String cmd = "java "+jvmString+" -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
+		String cmd = "java -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
 //		if (!getDescriptor().getIsSelected() && configuration != null) {
 //			File conf = new File(configuration);
 //			if (conf.exists() && !conf.isDirectory())
@@ -102,14 +92,12 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 //			else
 //				listener.getLogger().println("配置文件未找到。");
 //		}
-		
-		//exeCmd("who am i",listener);
+		//exeCmd("ifconfig",listener);
+		//exeCmd("whoami",listener);
 		//exeCmd("java -version",listener);
-		
 		if (new File(jarPath).exists()) {
 			// execute fireline
 			listener.getLogger().println("FireLine start scanning...");
-			
 			exeCmd(cmd,listener);
 			//listener.getLogger().println(output);
 			listener.getLogger().println("FireLine report path: " + reportPath);
@@ -125,60 +113,20 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		return (DescriptorImpl) super.getDescriptor();
 	}
 
-//	private void deleteAllFilesOfDir(File path) {
-//		if (path==null) {
-//			return;
-//		}
-//		try{
-//			if (!path.exists())
-//				return;
-//			if (path.isFile()) {
-//				try {
-//					path.delete();
-//				} catch (Exception e) {
-//					// TODO: handle exception
-//					e.printStackTrace();
-//				}
-//				return;
-//			}
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		File[] files = path.listFiles();
-//		if (files!=null) {
-//			for (int i = 0; i < files.length; i++) {
-//				deleteAllFilesOfDir(files[i]);
-//			}
-//		}
-//		// path.delete();
-//	}
-
 	private void exeCmd(String commandStr, TaskListener listener) {
 		Process p = null;
 		try {
 			Runtime rt=Runtime.getRuntime();
-			listener.getLogger().println(commandStr);
+			//listener.getLogger().println(commandStr);
 			p = rt.exec(commandStr);
 			listener.getLogger().println("CommandLine output:");
 			StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream(), "ERROR",listener);
-			StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream(), "OUTPUT",listener);  
+			StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream(), "INFO",listener);  
 			errorGobbler.start();  
             outputGobbler.start();  
-            int exitVal = p.waitFor(); 
-            System.out.println(exitVal);
-			//br = new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF-8"));
-			//String line = null;
-			//StringBuilder sb = new StringBuilder();		
-			//long start1=System.currentTimeMillis();
-			//while ((line = br.readLine()) != null) {
-				//sb.append(line + "\n");
-//				listener.getLogger().println(line);
-//				listener.getLogger().println("需要 "+(System.currentTimeMillis()-start1)+"毫秒");
-//			}
-			//output = sb.toString();
-			//System.out.println(sb.toString());
-		}catch(RuntimeException e){
-			throw e;
+            p.waitFor();
+		} catch (RuntimeException e) {
+			throw(e);
 		}catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -190,9 +138,6 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 
 	private String getFireLineJar(TaskListener listener) {
 		//listener.getLogger().println("platform= " +platform);
-		//listener.getLogger().println("path1= " +FireLineBuilder.class.getResource(jarFile));
-		//listener.getLogger().println("path2= " +FireLineBuilder.class.getResource(jarFile).getFile());
-		
 		String oldPath=null;
 		String newPath = null;
 		if (platform.contains("Linux")) {
@@ -219,15 +164,30 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		return newPath;
 	}
 
-	private boolean checkReportPath(String path) {
+	private void checkReportPath(String path) {	
 		if (path != null && path.length() > 0) {
 			File filePath = new File(path);
-			if (filePath.exists() && filePath.isDirectory())
-				return true;
+			if (filePath.exists() && filePath.isDirectory()){
+				
+			}else {
+				try {
+					filePath.mkdirs();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			}	
 		}
-		return false;
 	}
-
+	
+	public static String getMemUsage() {  
+	    long free = java.lang.Runtime.getRuntime().freeMemory();  
+	    long total = java.lang.Runtime.getRuntime().totalMemory();   
+	    StringBuffer buf = new StringBuffer();  
+	    buf.append("[Mem: used ").append((total-free)>>20)  
+	        .append("M free ").append(free>>20)  
+	        .append("M total ").append(total>>20).append("M]");  
+	    return buf.toString();  
+	}  
 
 	/**
 	 * Descriptor for {@link FireLineBuilder}. Used as a singleton. The class is
@@ -332,10 +292,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			try {
 				if (!report.exists()) {
 					try {
-						if(!report.mkdir())
-							return null;
+						report.mkdir();
 					} catch (Exception e) {
-						throw(e);// TODO: handle exception
+						// TODO: handle exception
 					}
 				}
 			} catch (Exception e) {
