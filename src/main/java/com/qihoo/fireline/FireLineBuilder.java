@@ -81,10 +81,10 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			listener.getLogger().println("您扫描的项目路径："+projectPath+"不正确。");
 		//报告路径不存在时，创建该路径
 		checkReportPath(reportPath);
-		//String jvmString="-Xmx2g";
+		String jvmString="-Xms1g -Xmx1g -XX:MaxPermSize=512m";
 		//listener.getLogger().println(getMemUsage());
-		//String cmd = "java "+jvmString+" -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
-		String cmd = "java -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
+		String cmd = "java "+jvmString+" -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
+		//String cmd = "java -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
 //		if (!getDescriptor().getIsSelected() && configuration != null) {
 //			File conf = new File(configuration);
 //			if (conf.exists() && !conf.isDirectory())
