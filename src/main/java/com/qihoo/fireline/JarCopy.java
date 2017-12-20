@@ -1,27 +1,19 @@
 package com.qihoo.fireline;
-
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 /**
+ * yuanwei3-iri
  * 从jar包中取文件
- * yuanwei 
- * 2017-11-29
+ * 2017-12-15
  */
-
 public class JarCopy {
 	/**
 	* 从jar包中取文件
 	* @param oldPath 文件路径	
 	* @param newPath 文件取出路径
-	*  
 	*/
 	public static void copyJarResource(String oldPath,String newPath) throws Exception {
 		//创建目录
@@ -29,17 +21,17 @@ public class JarCopy {
 		File pathFile=new File(d.getParent());
 		if (!pathFile.exists()) {
 			try {
-				if(!pathFile.mkdirs())
-					System.out.println("Create Directory Fail,Please Make Sure Your Account Have READ And Write Permission!");
+				pathFile.mkdirs();
 			} catch (Exception e) {
 				// TODO: handle exception
-				System.out.println("Create Directory Fail,Please Make Sure Your Account Have READ And Write Permission!");
+				//System.out.println("Create Directory Fail,Please Make Sure Your Account Have READ And Write Permission!");
 			}			
 		}
 		
 		if (d.exists()) {
 			if(!d.delete())
-				System.out.println("Fail to delete file.");;
+				System.out.println("Fail to delete file.");
+			;
 		}
 		InputStream stream = null;
         OutputStream resStreamOut = null;
@@ -67,7 +59,6 @@ public class JarCopy {
 					}
 				} catch (Exception e) {
 					// TODO: handle exception
-					e.printStackTrace();
 				}
 	        	if (resStreamOut!=null) {
 	        		resStreamOut.close();
