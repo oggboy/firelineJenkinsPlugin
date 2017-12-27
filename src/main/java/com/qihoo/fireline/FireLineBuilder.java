@@ -17,15 +17,13 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.QueryParameter;
 
 import com.qihoo.fireline.JarCopy;
-import com.sun.akuma.JavaVMArguments;
+import com.qihoo.utils.FileUtils;
+import com.qihoo.utils.StringUtils;
 
 import javax.servlet.ServletException;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Sample {@link Builder}.
@@ -45,6 +43,7 @@ import java.io.InputStreamReader;
 public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private final String configuration;
 	private final String reportPath;
+	private final String reportFileName;
 	//private String output;
 	private static String jarFile = "/lib/firelineJar.jar";
 	public final static String platform = System.getProperty("os.name");
@@ -52,9 +51,10 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
 	@DataBoundConstructor
-	public FireLineBuilder(String config, String reportPath) {
-		this.configuration = config;
+	public FireLineBuilder(String configuration, String reportPath,String reportFileName) {
+		this.configuration = configuration;
 		this.reportPath = reportPath;
+		this.reportFileName=reportFileName;
 	}
 
 	/**
@@ -64,10 +64,21 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	 * @return
 	 */
 	public String getConfiguration() {
-		return configuration;
+		return this.configuration;
 	}
 	public String getReportPath() {
-		return reportPath;
+		return this.reportPath;
+	}
+	public String getReportFileName() {
+		return this.reportFileName;
+	}
+	
+	// Overridden for better type safety.
+		// If your plugin doesn't really define any property on Descriptor,
+		// you don't have to do this.
+		@Override
+	public DescriptorImpl getDescriptor() {
+		return (DescriptorImpl) super.getDescriptor();
 	}
 
 	@Override
@@ -77,24 +88,25 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		String jarPath=null;
 		jarPath = getFireLineJar(listener);
 		// check params
-		if (!getDescriptor().existFile(projectPath))
+		if (!FileUtils.existFile(projectPath))
 			listener.getLogger().println("您扫描的项目路径："+projectPath+"不正确。");
 		//报告路径不存在时，创建该路径
 		checkReportPath(reportPath);
 		String jvmString="-Xms1g -Xmx1g -XX:MaxPermSize=512m";
-		//listener.getLogger().println(getMemUsage());
-		String cmd = "java "+jvmString+" -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
+		String cmd = "java "+jvmString+" -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath+" reportFileName="+reportFileName;
+		
 		//String cmd = "java -jar " + jarPath + " -s=" + projectPath + " -r=" + reportPath;
-//		if (!getDescriptor().getIsSelected() && configuration != null) {
-//			File conf = new File(configuration);
-//			if (conf.exists() && !conf.isDirectory())
-//				cmd = cmd + " config=" + configuration;
-//			else
-//				listener.getLogger().println("配置文件未找到。");
-//		}
+		if (configuration != null) {
+			File conf = new File(configuration);
+			if (conf.exists() && !conf.isDirectory())
+				cmd = cmd + " config=" + configuration;
+			else
+				listener.getLogger().println("配置文件未找到。");
+		}
 		//exeCmd("ifconfig",listener);
 		//exeCmd("whoami",listener);
 		//exeCmd("java -version",listener);
+//		listener.getLogger().println("cmd="+cmd);
 		if (new File(jarPath).exists()) {
 			// execute fireline
 			listener.getLogger().println("FireLine start scanning...");
@@ -105,13 +117,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			listener.getLogger().println("fireline.jar does not exist!!");
 	}
 
-	// Overridden for better type safety.
-	// If your plugin doesn't really define any property on Descriptor,
-	// you don't have to do this.
-	@Override
-	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl) super.getDescriptor();
-	}
+	
 
 	private void exeCmd(String commandStr, TaskListener listener) {
 		Process p = null;
@@ -243,6 +249,12 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			}
 			if (!existFile(value) || !(new File(value).isDirectory()))
 				return FormValidation.error("您输入报告路径不正确。");
+			return FormValidation.ok();
+		}
+		public FormValidation doCheckReportFileName(@QueryParameter String value) {
+			if (value == null || value.length() == 0) {
+				return FormValidation.error("报告文件名不能为空。");
+			}			
 			return FormValidation.ok();
 		}
 

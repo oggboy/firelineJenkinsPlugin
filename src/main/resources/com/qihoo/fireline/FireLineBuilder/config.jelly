@@ -14,15 +14,15 @@
    <f:textbox default="${descriptor.defaultReportPath()}"/>
   </f:entry>
  -->
-<!--  <f:entry title="静态代码扫描工具——火线（FireLine）" description="火线。&lt;br / &gt;FireLine Plugin,an static code analysis program  to look for bugs in Java code,which has integrated Alibaba Java Coding Guidelines (P3C).&lt;br / &gt;">
+  <f:entry title="静态代码扫描工具——火线（FireLine）" description="火线是一种支持Android和Java的静态代码扫描工具，支持安全和资源泄露规则的检查。最新版本已经兼容阿里巴巴Java代码规范（P3C）。&lt;br / &gt;FireLine Plugin is a code analysis tool for Android or Java code.It can detect Security and Resource Leak bugs. Alibaba Java Coding Guidelines (P3C) is compatible in recent release. &lt;br / &gt;">
   </f:entry>
-  -->
-  <f:entry title="结果报告路径:&lt;br / &gt;(Report path)" field="reportPath" description="火线是一种支持Android和Java的静态代码扫描工具，支持安全和资源泄露规则的检查。最新版本已经兼容阿里巴巴Java代码规范（P3C）。&lt;br / &gt;FireLine Plugin is a code analysis tool for Android or Java code.It can detect Security and Resource Leak bugs. Alibaba Java Coding Guidelines (P3C) is compatible in recent release. &lt;br / &gt;">
+  <f:entry title="结果报告路径:&lt;br / &gt;(Report path)" field="reportPath" description="">
     <f:textbox default="${descriptor.defaultReportPath()}"/>
   </f:entry>
- 
-    <f:invisibleEntry title="规则配置文件:&lt;br / &gt;(Rule configuration file)" field="configuration"
-    	description="规则配置文件，如**/RedLineConfigurationNoLog.xml。可以通过该配置文件控制FireLine扫描规则类型，为空时默认扫描所有类型的规则。访问http://magic.360.cn/查看更多详情。&lt;br / &gt;&lt;br / &gt;(Rule configuration file, for example, **/RedLineConfigurationNoLog.xml, which can filter rules according to your demands. More detail, http://magic.360.cn/)">
-    	<f:textbox />
-  	</f:invisibleEntry>
+  <f:entry title="结果报告文件名test:&lt;br / &gt;(Report FileName)" field="reportFileName">
+    <f:textbox default="testReport"/>
+  </f:entry> 
+  <f:entry title="规则配置文件:&lt;br / &gt;(Rule configuration file)" field="configuration">
+  <f:textbox />
+  </f:entry>
 </j:jelly>
