@@ -43,7 +43,7 @@ public class FileUtils {
 		
 		File dir=new File(directory);
 		try {
-			if (dir==null||dir.exists()) {
+			if (dir.exists()) {
 //				System.out.println("*************File is null  "+dir);
 				return false;
 			}else{
@@ -59,5 +59,22 @@ public class FileUtils {
 		}
 		return false;
 	}
+	
+	public static String defaultReportPath() {
+		File report=new File(System.getProperty("java.io.tmpdir") + "/report");
+		try {
+			if (!report.exists()) {
+				try {
+					report.mkdir();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return report.getPath();
+	}		
 
 }

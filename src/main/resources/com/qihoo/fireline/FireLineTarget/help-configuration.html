@@ -1,0 +1,39 @@
+<div>
+规则配置文件，如**/RedLineConfigurationNoLog.xml。
+可以通过该配置文件控制FireLine扫描规则类型，为空时默认扫描所有类型的规则。
+访问<a href="http://magic.360.cn/">火线(FireLine)官网</a>查看更多详情。
+(Rule configuration file, for example, **/RedLineConfigurationNoLog.xml, which can filter rules according to your demands. 
+More detail, <a href="http://magic.360.cn/">http://magic.360.cn/</a>)
+	配置文件的写法如下：
+	<pre>
+          <code>
+                <xmp>
+                     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                        <redline>
+                                <args>
+                                    <!-- 选择扫描哪些类别的规则
+                                    1：代码规范类
+                                    2：内存类
+                                    3：日志类
+                                    4：安全类
+                                    5：空指针
+                                    6：多线程
+                                    -->
+                                    <scanTypes>1+2+4+5+6</scanTypes>
+                                </args>
+                                <pmd>
+                                    <!--过滤单条规则，规则名称可参照RedLineRule_All.xml文件内容-->
+                                    <filterRules>           
+                                        <filterRule ruleName="">                
+                                        </filterRule>
+                                    </filterRules>
+                                </pmd>
+                     	</redline>
+                 </xmp>
+              </code> 
+        </pre>
+	<p>
+		以上配置文件去掉了日志类的规则，所以火线扫描过程中就不会执行日志类规则的检查。</br> 该参数不指定时会默认扫描所有类型的规则。</br>
+	</p>
+
+</div>
