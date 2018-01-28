@@ -14,57 +14,63 @@ import com.qihoo.utils.StringUtils;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.Action;
 import hudson.model.Descriptor;
+import hudson.model.Run;
 import hudson.util.FormValidation;
 
-public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget>{
+public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 	private final String configuration;
 	private final String reportPath;
 	private final String reportFileName;
 	private final String jdk;
-	//notScan=true, not analyze code;notScan=false,analyze code.
+	// notScan=true, not analyze code;notScan=false,analyze code.
 	private final boolean notScan;
-	
+
 	@DataBoundConstructor
-	public FireLineTarget(String configuration, String reportPath,String reportFileName,boolean notScan,String jdk) {
+	public FireLineTarget(String configuration, String reportPath, String reportFileName, boolean notScan, String jdk) {
 		this.configuration = StringUtils.trim(configuration);
 		this.reportPath = StringUtils.trim(reportPath);
-		this.reportFileName=StringUtils.trim(reportFileName);
-		this.notScan=notScan;
-		this.jdk=jdk;
+		this.reportFileName = StringUtils.trim(reportFileName);
+		this.notScan = notScan;
+		this.jdk = jdk;
 	}
-	
+
 	public String getConfiguration() {
 		return this.configuration;
 	}
+
 	public String getReportPath() {
 		return this.reportPath;
 	}
+
 	public String getReportFileName() {
 		return StringUtils.getSanitizedName(this.reportFileName);
 	}
+
 	public boolean getNotScan() {
 		return this.notScan;
 	}
+
 	public String getJdk() {
 		return jdk != null && !jdk.isEmpty() ? jdk : "(Inherit From Job)";
 	}
-	
-	/*@DataBoundSetter
-	public void setJdk(String jdk) {
-		this.jdk = jdk;
-	}*/
-	
+
 	@Extension
-    public static class DescriptorImpl extends Descriptor<FireLineTarget> {
-        public String getDisplayName() { 
-        	return ""; 
-        }
-        
-        public FormValidation doCheckConfiguration(@QueryParameter String value) throws IOException, ServletException {
+	public static class DescriptorImpl extends Descriptor<FireLineTarget> {
+		@Override
+		public String getDisplayName() {
+			return "";
+		}
+
+		public FormValidation doCheckConfiguration(@QueryParameter String value) throws IOException, ServletException {
 			if (value != null && value.length() > 0) {
-				if (!FileUtils.existFile(value) || new File(value).isDirectory())
+				if (!FileUtils.existFile(value) || new File(value).isDirectory()) {
 					return FormValidation.error("The configuration file of FireLine doesn't exist.");
+				}
+				if (!FileUtils.checkSuffixOfFileName(value, "xml")) {
+					return FormValidation.error("The XML configuration file format is illegal.");
+				}
 			}
 			return FormValidation.ok();
 		}
@@ -72,27 +78,67 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget>{
 		public FormValidation doCheckReportPath(@QueryParameter String value) throws IOException, ServletException {
 
 			if (value == null || value.length() == 0) {
-				return FormValidation.error("Please set your report path");
+				return FormValidation.error("Please input your report path");
 			}
 			if (!FileUtils.existFile(value) || !(new File(value).isDirectory()))
 				return FormValidation.error("The report path can't be found.");
 			return FormValidation.ok();
 		}
+
 		public FormValidation doCheckReportFileName(@QueryParameter String value) {
 			if (value == null || value.length() == 0) {
-				return FormValidation.error("Please set your report file name.");
-			}			
+				return FormValidation.error("Please input your report file name.");
+			}
+			if (!FileUtils.checkSuffixOfFileName(value, "html")) {
+				return FormValidation.error("Please input the report file name with suffix of \"html\".");
+			}
 			return FormValidation.ok();
 		}
+
 		public FormValidation doCheckJdk(@QueryParameter String value) {
-			if (value.contains("1.8")||value.contains("1.7")) {
+			if (value.contains("1.8") || value.contains("1.7")) {
 				return FormValidation.ok();
-			}			
+			}
 			return FormValidation.error("JDK1.7 or 1.8 is compatible with FireLine.");
-		}                
-        public String defaultReportPath() {
-        	return FileUtils.defaultReportPath();
-        }
-    }
+		}
+
+		public String defaultReportPath() {
+			return FileUtils.defaultReportPath();
+		}
+	}
 	
+	/*public void handleAction(Run<?,?> build) {
+		build.addAction(new FireLineScanCodeAction(notScan));
+	}
+	
+	public void getAction() {
+		return new FireLineScanCodeAction();
+	}
+	public class FireLineScanCodeAction implements Action{
+		private final boolean isScan;
+		@DataBoundConstructor
+		public FireLineScanCodeAction(boolean isScan) {
+			this.isScan=isScan;
+		}
+		public FireLineScanCodeAction() {
+			new FireLineScanCodeAction(isScan);
+		}
+		public boolean getIsScan() {
+			return this.isScan;
+		}
+	    @Override
+	    public String getUrlName() {
+	        return "FireLine_Analysis_Code";
+	    }
+	    @Override
+	    public String getIconFileName() {
+	        return "fireLine.icon";
+	    }
+
+	    @Override
+	    public String getDisplayName() {
+	        return "FireLine Static Analysis";
+	    }	    
+	}*/
+
 }

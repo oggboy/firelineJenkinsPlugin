@@ -1,57 +1,36 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <!--
-    This jelly script is used for per-project configuration.
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-    See global.jelly for a general discussion about jelly script.
-  -->
-
-<!--
-    Creates a text field that shows the value of the "name" property.
-    When submitted, it will be passed to the corresponding constructor parameter.
- 
-  <f:entry title="扫描结果报告路径" field="reportPath" >
-   <f:textbox default="${descriptor.defaultReportPath()}"/>
-  </f:entry>
- -->
- 
- 
-<f:entry title="静态代码扫描工具——火线（FireLine）" description="火线是一种支持Android和Java的静态代码扫描工具，支持安全和资源泄露规则的检查。最新版本已经兼容阿里巴巴Java代码规范（P3C）。&lt;br / &gt;FireLine Plugin is a code analysis tool for Android or Java code.It can detect Security and Resource Leak bugs. Alibaba Java Coding Guidelines (P3C) is compatible in recent release. &lt;br / &gt;">
-</f:entry>
-  
-<f:entry title="本次构建是否使用火线扫描：&lt;br / &gt;(Whether to analysis code with FireLine)" field="notScan">
+<f:invisibleEntry title="本次构建是否使用火线扫描：&lt;br / &gt;(Whether to analysis code with FireLine)" field="notScan">
 	<f:checkbox title="不使用/Disable"/>
-</f:entry>
+</f:invisibleEntry>
   
 <f:entry title="结果报告路径:&lt;br / &gt;(Report path)" field="reportPath">
     <f:textbox default="${descriptor.defaultReportPath()}"/>
 </f:entry>
   
-<f:entry title="结果报告文件名test:&lt;br / &gt;(Report FileName)" field="reportFileName">
-    <f:textbox default="testReport"/>
+<f:entry title="结果报告文件名:&lt;br / &gt;(Report FileName)" field="reportFileName">
+    <f:textbox default="testReport.html"/>
 </f:entry>
 <f:advanced>
 	<!--Configuration-->
 	<f:entry title="规则配置文件:&lt;br / &gt;(Rule configuration file)" field="configuration">
 		<f:textbox />
 	</f:entry>
+	
 	<!-- JDK -->
-  <j:set var="jdks"  value="${app.JDKs}" />
-  <f:entry title="JDK" field="jdk" description="JDK to be used for this FireLine analysis." help="/plugin/sonar/help-sonar-jdk.html">
-    <select class="setting-input validated" name="sonar.jdk" checkUrl="'${rootURL}/defaultJDKCheck?value='+this.value">
-      <option>${%InheritFromJob}</option>
-      <j:forEach var="inst" items="${jdks}">
-        <f:option selected="${inst.name==instance.jdkFromJenkins.name}" value="${inst.name}">${inst.name}</f:option>
-      </j:forEach>
-    </select>
-  </f:entry>
+	<f:invisibleEntry field="jdk">
+	  <j:set var="jdks"  value="${app.JDKs}" />
+	  <f:entry title="JDK" description="JDK to be used for this FireLine analysis." help="/plugin/sonar/help-sonar-jdk.html">
+	    <select class="setting-input validated" name="fireLine.jdk" checkUrl="'${rootURL}/defaultJDKCheck?value='+this.value">
+	      <option>${%InheritFromJob}</option>
+	      <j:forEach var="inst" items="${jdks}">
+	        <f:option field="jdk" selected="${inst.name==instance.getJdk()}" value="${inst.name}">${inst.name}</f:option>
+	      </j:forEach>
+	    </select>
+	  </f:entry>
+	 </f:invisibleEntry>
 </f:advanced>
-<!--
-<f:entry>
-   <div align="right">
-     <f:repeatableDeleteButton />
-   </div>
-</f:entry>
--->
 </j:jelly>
 
