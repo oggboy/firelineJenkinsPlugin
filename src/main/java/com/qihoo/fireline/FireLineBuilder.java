@@ -194,7 +194,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			Computer computer = workspace.toComputer();
 			// just in case we are not in a build
 			if (computer != null) {
-				jdkToUse = jdkToUse.forNode(computer.getNode(), listener);
+				jdkToUse = jdkToUse.forNode(computer.getNode(), listener)==null?jdkToUse:jdkToUse.forNode(computer.getNode(), listener);
 			}
 			jdkToUse.buildEnvVars(env);
 		}
@@ -216,7 +216,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	 */
 	@CheckForNull
 	public JDK getJdkFromJenkins() {
-		return Jenkins.getInstance().getJDK(jdk);
+		return Jenkins.getInstance().getJDK(jdk)==null? null:Jenkins.getInstance().getJDK(jdk);
 	}
 
 	public boolean checkFireLineJdk(JDK jdkToUse) {
