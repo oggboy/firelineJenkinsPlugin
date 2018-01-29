@@ -219,8 +219,11 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	 */
 	@CheckForNull
 	public JDK getJdkFromJenkins() {
-		JDK jdkTmp=Jenkins.getInstance().getJDK(jdk);
-		return jdkTmp==null? null:jdkTmp;
+		Jenkins jenkins=Jenkins.getInstance();
+		if(jdk!=null&&jenkins!=null) {
+			return jenkins.getJDK(jdk);
+		}
+		return null;
 	}
 
 	public boolean checkFireLineJdk(JDK jdkToUse) {
