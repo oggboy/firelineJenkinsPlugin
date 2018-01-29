@@ -8,6 +8,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Computer;
 import hudson.model.JDK;
+import hudson.model.Node;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.Builder;
@@ -194,7 +195,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			Computer computer = workspace.toComputer();
 			// just in case we are not in a build
 			if (computer != null) {
-				jdkToUse = jdkToUse.forNode(computer.getNode(), listener)==null?jdkToUse:jdkToUse.forNode(computer.getNode(), listener);
+				Node node=computer.getNode();
+				if(node!=null)
+					jdkToUse = jdkToUse.forNode(computer.getNode(), listener);
 			}
 			jdkToUse.buildEnvVars(env);
 		}
@@ -216,7 +219,8 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	 */
 	@CheckForNull
 	public JDK getJdkFromJenkins() {
-		return Jenkins.getInstance().getJDK(jdk)==null? null:Jenkins.getInstance().getJDK(jdk);
+		JDK jdkTmp=Jenkins.getInstance().getJDK(jdk);
+		return jdkTmp==null? null:jdkTmp;
 	}
 
 	public boolean checkFireLineJdk(JDK jdkToUse) {
