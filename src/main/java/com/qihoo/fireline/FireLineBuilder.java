@@ -63,7 +63,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	@Override
 	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
 			throws InterruptedException, IOException {
-		String jvmString = "-Xms1g -Xmx1g -XX:MaxPermSize=512m";
+//		String jvmString = "-Xms1g -Xmx1g -XX:MaxPermSize=512m";
 		EnvVars env = BuilderUtils.getEnvAndBuildVars(build, listener);
 		String projectPath = workspace.getRemote();
 		String reportFileNameTmp=fireLineTarget.getReportFileName().substring(0,fireLineTarget.getReportFileName().lastIndexOf("."));
@@ -81,7 +81,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		
 		// 报告路径不存在时，创建该路径
 		checkReportPath(fireLineTarget.getReportPath());
-		String cmd = "java " + jvmString + " -jar " + jarPath + " -s=" + projectPath + " -r="
+		String cmd = "java " + fireLineTarget.getJvm() + " -jar " + jarPath + " -s=" + projectPath + " -r="
 				+ fireLineTarget.getReportPath() + " reportFileName=" + reportFileNameTmp;
 
 		if (fireLineTarget.getConfiguration() != null) {

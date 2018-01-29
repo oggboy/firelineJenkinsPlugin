@@ -19,10 +19,14 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 		<f:textbox />
 	</f:entry>
 	
+	<!--JVM-->
+	<f:entry field="jvm" title="JVM参数配置:&lt;br / &gt;(JVM argument)">
+		<f:textbox default="-Xms1g -Xmx1g -XX:MaxPermSize=512m"/>
+	</f:entry>
+	
 	<!-- JDK -->
-	<f:invisibleEntry field="jdk">
-	  <j:set var="jdks"  value="${app.JDKs}" />
-	  <f:entry title="JDK" description="JDK to be used for this FireLine analysis." help="/plugin/sonar/help-sonar-jdk.html">
+	 <j:set var="jdks"  value="${app.JDKs}" />
+	  <f:entry field="jdk" title="JDK版本设置:&lt;br / &gt;(JDK version)">
 	    <select class="setting-input validated" name="fireLine.jdk" checkUrl="'${rootURL}/defaultJDKCheck?value='+this.value">
 	      <option>${%InheritFromJob}</option>
 	      <j:forEach var="inst" items="${jdks}">
@@ -30,7 +34,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	      </j:forEach>
 	    </select>
 	  </f:entry>
-	 </f:invisibleEntry>
 </f:advanced>
 </j:jelly>
 
