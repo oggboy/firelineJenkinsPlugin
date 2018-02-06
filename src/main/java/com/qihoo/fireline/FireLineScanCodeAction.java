@@ -1,5 +1,6 @@
 package com.qihoo.fireline;
 
+import hudson.PluginManager;
 import hudson.PluginWrapper;
 import hudson.model.Action;
 import hudson.model.ProminentProjectAction;
@@ -15,8 +16,10 @@ public class FireLineScanCodeAction implements ProminentProjectAction {
 	@Override
 	public String getIconFileName() {
 		PluginWrapper wrapper = null;
-		if (Jenkins.getInstance() != null && Jenkins.getInstance().getPluginManager() != null)
-			wrapper = Jenkins.getInstance().getPluginManager().getPlugin("fireline");
+		Jenkins jenkins=Jenkins.getInstance();
+		PluginManager pluginManager=jenkins.getPluginManager();
+		if ( jenkins!= null && pluginManager!= null)
+			wrapper = pluginManager.getPlugin("fireline");
 		if (wrapper != null)
 			return "/plugin/" + wrapper.getShortName() + "/images/fireLine_48x48.png";
 		return null;
