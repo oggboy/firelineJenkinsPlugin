@@ -26,14 +26,14 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 	private final String jdk;
 	private final String jvm;
 	// notScan=true, not analyze code;notScan=false,analyze code.
-	private final boolean notScan;
+	private final String buildWithParameter;
 
 	@DataBoundConstructor
-	public FireLineTarget(String configuration, String reportPath, String reportFileName, boolean notScan, String jdk,String jvm) {
+	public FireLineTarget(String configuration, String reportPath, String reportFileName, String buildWithParameter, String jdk,String jvm) {
 		this.configuration = StringUtils.trim(configuration);
 		this.reportPath = StringUtils.trim(reportPath);
 		this.reportFileName = StringUtils.trim(reportFileName);
-		this.notScan = notScan;
+		this.buildWithParameter = buildWithParameter;
 		this.jdk = jdk;
 		this.jvm=StringUtils.trim(jvm);
 	}
@@ -50,8 +50,8 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 		return StringUtils.getSanitizedName(this.reportFileName);
 	}
 
-	public boolean getNotScan() {
-		return this.notScan;
+	public String getBuildWithParameter() {
+		return this.buildWithParameter;
 	}
 
 	public String getJdk() {
@@ -114,44 +114,26 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 			}
 			return FormValidation.ok();
 		}
+		public FormValidation doCheckBuildWithParameter(@QueryParameter String value) {
+			if(value!=null&&value.length()>0) {
+				if(!(value.substring(0, 2).equals("${")&&value.charAt(value.length()-1)=='}')){
+					return FormValidation.error("The parameter value is illegal.");
+				}
+			}
+			return FormValidation.ok();
+		}
 
 		public String defaultReportPath() {
 			return FileUtils.defaultReportPath();
 		}
 	}
 	
-	/*public void handleAction(Run<?,?> build) {
-		build.addAction(new FireLineScanCodeAction(notScan));
+	public void handleAction(Run<?,?> build) {
+//		System.out.println("--------------------handleAction-----------------");
+		build.addAction(getProjectAction());
 	}
 	
-	public void getAction() {
+	public Action getProjectAction() {
 		return new FireLineScanCodeAction();
 	}
-	public class FireLineScanCodeAction implements Action{
-		private final boolean isScan;
-		@DataBoundConstructor
-		public FireLineScanCodeAction(boolean isScan) {
-			this.isScan=isScan;
-		}
-		public FireLineScanCodeAction() {
-			new FireLineScanCodeAction(isScan);
-		}
-		public boolean getIsScan() {
-			return this.isScan;
-		}
-	    @Override
-	    public String getUrlName() {
-	        return "FireLine_Analysis_Code";
-	    }
-	    @Override
-	    public String getIconFileName() {
-	        return "fireLine.icon";
-	    }
-
-	    @Override
-	    public String getDisplayName() {
-	        return "FireLine Static Analysis";
-	    }	    
-	}*/
-
 }

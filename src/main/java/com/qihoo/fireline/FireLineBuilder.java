@@ -6,6 +6,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Action;
 import hudson.model.Computer;
 import hudson.model.JDK;
 import hudson.model.Node;
@@ -22,12 +23,15 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import com.qihoo.utils.BuilderUtils;
 import com.qihoo.utils.FileUtils;
+import com.qihoo.utils.VariableReplacerUtil;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Sample {@link Builder}.
@@ -37,16 +41,11 @@ import java.io.IOException;
 public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private final FireLineTarget fireLineTarget;
 	private String jdk;
-	// private String output;
 	private static String jarFile = "/lib/firelineJar.jar";
 	public final static String platform = System.getProperty("os.name");
-
-	// Fields in config.jelly must match the parameter names in the
-	// "DataBoundConstructor"
+	
 	@DataBoundConstructor
 	public FireLineBuilder(@CheckForNull FireLineTarget fireLineTarget) {
-		// this.fireLineTargets=fireLineTargets != null ? new
-		// ArrayList<FireLineTarget>(fireLineTargets) : new ArrayList<FireLineTarget>();
 		this.fireLineTarget = fireLineTarget;
 	}
 
@@ -54,31 +53,33 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	public FireLineTarget getFireLineTarget() {
 		return this.fireLineTarget;
 	}
-	
+
 	@Override
-	  public DescriptorImpl getDescriptor() {
-	    return (DescriptorImpl) super.getDescriptor();
-	  }
+	public DescriptorImpl getDescriptor() {
+		return (DescriptorImpl) super.getDescriptor();
+	}
 
 	@Override
 	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
 			throws InterruptedException, IOException {
-//		String jvmString = "-Xms1g -Xmx1g -XX:MaxPermSize=512m";
 		EnvVars env = BuilderUtils.getEnvAndBuildVars(build, listener);
 		String projectPath = workspace.getRemote();
-		String reportFileNameTmp=fireLineTarget.getReportFileName().substring(0,fireLineTarget.getReportFileName().lastIndexOf("."));
-		jdk = fireLineTarget.getJdk();
+		String reportFileNameTmp = fireLineTarget.getReportFileName().substring(0,
+				fireLineTarget.getReportFileName().lastIndexOf("."));
 		String jarPath = null;
-		//add actions 
-//		build.addAction(new FireLineScanCodeAction());
+		String buildWithParameter = fireLineTarget.getBuildWithParameter();
+		buildWithParameter = VariableReplacerUtil.preludeWithBuild(build, listener, buildWithParameter);
+		jdk = fireLineTarget.getJdk();
+		// add actions
+		fireLineTarget.handleAction(build);
 		// Set JDK version
 		computeJdkToUse(build, workspace, listener, env);
-		//get path of fireline.jar
+		// get path of fireline.jar
 		jarPath = getFireLineJar(listener);
 		// check params
 		if (!FileUtils.existFile(projectPath))
 			listener.getLogger().println("The path of project ：" + projectPath + "can't be found.");
-		
+
 		// 报告路径不存在时，创建该路径
 		checkReportPath(fireLineTarget.getReportPath());
 		String cmd = "java " + fireLineTarget.getJvm() + " -jar " + jarPath + " -s=" + projectPath + " -r="
@@ -89,22 +90,21 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			if (conf.exists() && !conf.isDirectory())
 				cmd = cmd + " config=" + fireLineTarget.getConfiguration();
 		}
-//		listener.getLogger().println("----------Scan--------" + fireLineTarget.getNotScan());
-		if (!fireLineTarget.getNotScan()) {
-			// debug/	
-//			if (checkFireLineJdk(getProject(build).getJDK())) {
-				if (new File(jarPath).exists()) {
-					// execute fireline
-					listener.getLogger().println("FireLine start scanning...");
-					exeCmd(cmd, listener);
-					listener.getLogger().println("FireLine report path: " + fireLineTarget.getReportPath());
-				} else {
-					listener.getLogger().println("fireline.jar does not exist!!");
-				}
-			/*} else {
-				listener.getLogger().println("The current JDK version is -------------"+getProject(build).getJDK().getHome());
-				listener.getLogger().println("The current JDK version is not compatiable with FireLine, and jdk1.7 or jdk1.8 can be compatiable.");
-			}*/
+		// listener.getLogger().println("----------Scan--------" +
+		// fireLineTarget.getNotScan());
+		if (buildWithParameter != null && buildWithParameter.contains("false")) {
+			listener.getLogger().println("Build without FireLine !!!");
+		} else {
+			// debug/
+			// if (checkFireLineJdk(getProject(build).getJDK())) {
+			if (new File(jarPath).exists()) {
+				// execute fireline
+				listener.getLogger().println("FireLine start scanning...");
+				exeCmd(cmd, listener);
+				listener.getLogger().println("FireLine report path: " + fireLineTarget.getReportPath());
+			} else {
+				listener.getLogger().println("fireline.jar does not exist!!");
+			}
 		}
 	}
 
@@ -195,8 +195,8 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			Computer computer = workspace.toComputer();
 			// just in case we are not in a build
 			if (computer != null) {
-				Node node=computer.getNode();
-				if(node!=null)
+				Node node = computer.getNode();
+				if (node != null)
 					jdkToUse = jdkToUse.forNode(computer.getNode(), listener);
 			}
 			jdkToUse.buildEnvVars(env);
@@ -219,24 +219,30 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	 */
 	@CheckForNull
 	public JDK getJdkFromJenkins() {
-		Jenkins jenkins=Jenkins.getInstance();
-		if(jdk!=null&&jenkins!=null) {
+		Jenkins jenkins = Jenkins.getInstance();
+		if (jdk != null && jenkins != null) {
 			return jenkins.getJDK(jdk);
 		}
 		return null;
 	}
 
 	public boolean checkFireLineJdk(JDK jdkToUse) {
-		String jdkPath=jdkToUse.getHome();
+		String jdkPath = jdkToUse.getHome();
 		return jdk != null && (jdkPath.contains("1.8") || jdkPath.contains("1.7"));
 	}
 
-	@Extension 
+	@Override
+	public Action getProjectAction(AbstractProject<?, ?> project) {
+		return fireLineTarget.getProjectAction();
+	}
+
+	@Extension
 	public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
 		@Override
 		public boolean isApplicable(Class<? extends AbstractProject> aClass) {
 			return true;
 		}
+
 		@Override
 		public String getDisplayName() {
 			return "Execute FireLine";

@@ -2,10 +2,11 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
+<!--
 <f:invisibleEntry title="本次构建是否使用火线扫描：&lt;br / &gt;(Whether to analysis code with FireLine)" field="notScan">
 	<f:checkbox title="不使用/Disable"/>
 </f:invisibleEntry>
-  
+-->
 <f:entry title="结果报告路径:&lt;br / &gt;(Report path)" field="reportPath">
     <f:textbox default="${descriptor.defaultReportPath()}"/>
 </f:entry>
@@ -15,8 +16,13 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 </f:entry>
 <f:advanced>
 	<!--Configuration-->
-	<f:entry title="规则配置文件:&lt;br / &gt;(Rule configuration file)" field="configuration">
+	<f:entry field="configuration" title="规则配置文件:&lt;br / &gt;(Rule configuration file)">
 		<f:textbox />
+	</f:entry>
+	
+	<!--build with parameter-->
+	<f:entry field="buildWithParameter" title="参数化构建：&lt;br / &gt;(Build with parameter)">
+		<f:textbox/>
 	</f:entry>
 	
 	<!--JVM-->
