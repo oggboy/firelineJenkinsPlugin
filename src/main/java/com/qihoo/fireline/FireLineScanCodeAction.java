@@ -14,8 +14,12 @@ public class FireLineScanCodeAction implements ProminentProjectAction {
 
 	@Override
 	public String getIconFileName() {
-		PluginWrapper wrapper = Jenkins.getInstance().getPluginManager().getPlugin("fireline");
-		return "/plugin/" + wrapper.getShortName() + "/images/fireLine_48x48.png";
+		PluginWrapper wrapper = null;
+		if (Jenkins.getInstance() != null && Jenkins.getInstance().getPluginManager() != null)
+			wrapper = Jenkins.getInstance().getPluginManager().getPlugin("fireline");
+		if (wrapper != null)
+			return "/plugin/" + wrapper.getShortName() + "/images/fireLine_48x48.png";
+		return null;
 	}
 
 	@Override
