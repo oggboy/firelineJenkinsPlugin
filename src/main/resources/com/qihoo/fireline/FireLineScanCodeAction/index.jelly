@@ -3,7 +3,7 @@
     <l:layout title="FireLine"> 
         <l:main-panel> 
         	<h1> 
-                isScan: ${it.isScan} 
+                Name: FireLine 
             </h1>
 		</l:main-panel>
     </l:layout>

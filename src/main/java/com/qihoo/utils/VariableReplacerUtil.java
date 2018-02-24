@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
@@ -25,16 +26,14 @@ public class VariableReplacerUtil {
 			return originalCommand;
 		}
 		vars.remove("_"); //why _ as key for build tool?
-		StringBuilder sb = new StringBuilder();
 		for(Entry<String,String> entry:vars.entrySet()) {
 			//TODO handle case sensitivity for command and each variable
 			if (originalCommand.contains(entry.getKey()) ) {
-				sb.append(entry.getKey()).append("=\"").append(entry.getValue()).append("\"\n");
+				String envStr="${"+entry.getKey()+"}";
+				originalCommand=originalCommand.replace(envStr,entry.getValue());
 			}
 		}
-		sb.append("\n");
-		sb.append(originalCommand);
-		return sb.toString();
+		return originalCommand;
 	}
 	
 	public static String preludeWithBuild(Run<?, ?> run,TaskListener listener,String originalString) throws IOException, InterruptedException {

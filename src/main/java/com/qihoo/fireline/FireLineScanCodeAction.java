@@ -2,7 +2,6 @@ package com.qihoo.fireline;
 
 import hudson.PluginManager;
 import hudson.PluginWrapper;
-import hudson.model.Action;
 import hudson.model.ProminentProjectAction;
 import jenkins.model.Jenkins;
 
