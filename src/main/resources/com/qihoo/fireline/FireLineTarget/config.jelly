@@ -16,8 +16,8 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 </f:entry>
 <f:advanced>
 	<!--Configuration-->
-	<f:entry field="configuration" title="规则配置文件:&lt;br / &gt;(Rule configuration file)">
-		<f:textbox />
+	<f:entry field="configuration" title="规则配置信息:&lt;br / &gt;(Rule configuration content)">
+		<f:textarea />
 	</f:entry>
 	
 	<!--build with parameter-->

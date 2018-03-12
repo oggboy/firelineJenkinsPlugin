@@ -49,6 +49,8 @@ import java.util.Map;
  */
 public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private final FireLineTarget fireLineTarget;
+	private String config;
+	private String reportPath;
 	private String jdk;
 	private static String jarFile = "/lib/firelineJar.jar";
 	public final static String platform = System.getProperty("os.name");
@@ -79,6 +81,11 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		String buildWithParameter = fireLineTarget.getBuildWithParameter();
 		buildWithParameter = VariableReplacerUtil.preludeWithBuild(build, listener, buildWithParameter);
 		reportFileNameTmp = VariableReplacerUtil.preludeWithBuild(build, listener, reportFileNameTmp);
+		config=VariableReplacerUtil.preludeWithBuild(build,listener,fireLineTarget.getConfiguration());
+		reportPath=VariableReplacerUtil.preludeWithBuild(build, listener, fireLineTarget.getReportPath());
+		if (!FileUtils.existFile(reportPath) || !(new File(reportPath).isDirectory())) {
+			reportPath=FileUtils.defaultReportPath();
+		}
 		jdk = fireLineTarget.getJdk();
 		// add actions
 		fireLineTarget.handleAction(build);
@@ -89,16 +96,15 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		// check params
 		if (!FileUtils.existFile(projectPath))
 			listener.getLogger().println("The path of project ：" + projectPath + "can't be found.");
-
 		// 报告路径不存在时，创建该路径
-		checkReportPath(fireLineTarget.getReportPath());
+		checkReportPath(reportPath);
 		String cmd = "java " + fireLineTarget.getJvm() + " -jar " + jarPath + " -s=" + projectPath + " -r="
-				+ fireLineTarget.getReportPath() + " reportFileName=" + reportFileNameTmp;
+				+ reportPath + " reportFileName=" + reportFileNameTmp;
 
-		if (fireLineTarget.getConfiguration() != null) {
-			File conf = new File(fireLineTarget.getConfiguration());
+		if (config != null) {
+			File conf = new File(config);
 			if (conf.exists() && !conf.isDirectory())
-				cmd = cmd + " config=" + fireLineTarget.getConfiguration();
+				cmd = cmd + " config=" + config;
 		}
 		if (buildWithParameter != null && buildWithParameter.contains("false")) {
 			listener.getLogger().println("Build without FireLine !!!");
@@ -110,12 +116,12 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 				listener.getLogger().println("FireLine start scanning...");
 				exeCmd(cmd, listener);
 				// if block number of report is not 0,then this build is set Failure.
-				if (getBlockNum(fireLineTarget.getReportPath(), reportFileNameTmp) != 0) {
+				if (getBlockNum(reportPath, reportFileNameTmp) != 0) {
 					build.setResult(Result.FAILURE);
 					listener.getLogger().println(
 							"[ERROR] There are some defects of \"Block\" level and FireLine set build result to FAILURE");
 				}
-				listener.getLogger().println("FireLine report path: " + fireLineTarget.getReportPath());
+				listener.getLogger().println("FireLine report path: " + reportPath);
 			} else {
 				listener.getLogger().println("fireline.jar does not exist!!");
 			}

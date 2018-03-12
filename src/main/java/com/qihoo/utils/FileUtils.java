@@ -1,6 +1,7 @@
 package com.qihoo.utils;
 
 import java.io.File;
+import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -86,19 +87,20 @@ public class FileUtils {
 			return false;
 		if (!filename.endsWith("." + suffix))
 			return false;
-		if (filename.endsWith(".xml")) {
-			try {
-				DocumentBuilderFactory foctory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder builder = foctory.newDocumentBuilder();
-				builder.parse(new File(filename));
-				return true;
-			} catch(RuntimeException e) {
-				return false;
-			}catch (Exception e) {
-				return false;
-			}
-		}
 		return true;
+	}
+	
+	public static boolean checkXmlInputStream(InputStream in) {
+		try {
+			DocumentBuilderFactory foctory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = foctory.newDocumentBuilder();
+			builder.parse(in);
+			return true;
+		} catch(RuntimeException e) {
+			return false;
+		}catch (Exception e) {
+			return false;
+		}
 	}
 
 }
