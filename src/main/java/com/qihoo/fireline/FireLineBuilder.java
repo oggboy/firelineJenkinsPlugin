@@ -116,10 +116,13 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 				listener.getLogger().println("FireLine start scanning...");
 				exeCmd(cmd, listener);
 				// if block number of report is not 0,then this build is set Failure.
-				if (getBlockNum(reportPath, reportFileNameTmp) != 0) {
-					build.setResult(Result.FAILURE);
-					listener.getLogger().println(
-							"[ERROR] There are some defects of \"Block\" level and FireLine set build result to FAILURE");
+				if(fireLineTarget.getBlockBuild()) {
+					if (getBlockNum(reportPath, reportFileNameTmp) != 0) {
+						
+						build.setResult(Result.FAILURE);
+						listener.getLogger().println(
+								"[ERROR] There are some defects of \"Block\" level and FireLine set build result to FAILURE");
+					}
 				}
 				listener.getLogger().println("FireLine report path: " + reportPath);
 			} else {

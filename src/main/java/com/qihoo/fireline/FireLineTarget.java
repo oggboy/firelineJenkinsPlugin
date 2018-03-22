@@ -22,6 +22,7 @@ import hudson.model.Run;
 import hudson.util.FormValidation;
 
 public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
+	private final boolean blockBuild;
 	private final String configuration;
 	private final String reportPath;
 	private final String reportFileName;
@@ -31,13 +32,18 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 	private final String buildWithParameter;
 
 	@DataBoundConstructor
-	public FireLineTarget(String configuration, String reportPath, String reportFileName, String buildWithParameter, String jdk,String jvm) {
+	public FireLineTarget(boolean blockBuild,String configuration, String reportPath, String reportFileName, String buildWithParameter, String jdk,String jvm) {
+		this.blockBuild=blockBuild;
 		this.configuration = StringUtils.trim(configuration);
 		this.reportPath = StringUtils.trim(reportPath);
 		this.reportFileName = StringUtils.trim(reportFileName);
 		this.buildWithParameter = buildWithParameter;
 		this.jdk = jdk;
 		this.jvm=StringUtils.trim(jvm);
+	}
+	
+	public boolean getBlockBuild() {
+		return this.blockBuild;
 	}
 
 	public String getConfiguration() {
