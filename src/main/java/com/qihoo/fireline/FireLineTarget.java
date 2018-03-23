@@ -2,6 +2,7 @@ package com.qihoo.fireline;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.CheckForNull;
 import javax.servlet.ServletException;
@@ -11,6 +12,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import com.qihoo.utils.FileUtils;
 import com.qihoo.utils.StringUtils;
+import com.qihoo.utils.VariableReplacerUtil;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -20,6 +22,7 @@ import hudson.model.Run;
 import hudson.util.FormValidation;
 
 public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
+	private final boolean blockBuild;
 	private final String configuration;
 	private final String reportPath;
 	private final String reportFileName;
@@ -29,13 +32,18 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 	private final String buildWithParameter;
 
 	@DataBoundConstructor
-	public FireLineTarget(String configuration, String reportPath, String reportFileName, String buildWithParameter, String jdk,String jvm) {
+	public FireLineTarget(boolean blockBuild,String configuration, String reportPath, String reportFileName, String buildWithParameter, String jdk,String jvm) {
+		this.blockBuild=blockBuild;
 		this.configuration = StringUtils.trim(configuration);
 		this.reportPath = StringUtils.trim(reportPath);
 		this.reportFileName = StringUtils.trim(reportFileName);
 		this.buildWithParameter = buildWithParameter;
 		this.jdk = jdk;
 		this.jvm=StringUtils.trim(jvm);
+	}
+	
+	public boolean getBlockBuild() {
+		return this.blockBuild;
 	}
 
 	public String getConfiguration() {
@@ -70,11 +78,9 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 		}
 
 		public FormValidation doCheckConfiguration(@QueryParameter String value) throws IOException, ServletException {
-			if (value != null && value.length() > 0) {
-				if (!FileUtils.existFile(value) || new File(value).isDirectory()) {
-					return FormValidation.error("The configuration file of FireLine doesn't exist.");
-				}
-				if (!FileUtils.checkSuffixOfFileName(value, "xml")) {
+			if (value.length() > 0) {
+				InputStream in=StringUtils.strToStream(value);
+				if(in!=null && !FileUtils.checkXmlInputStream(in)) {
 					return FormValidation.error("The XML configuration file format is illegal.");
 				}
 			}
@@ -86,8 +92,10 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 			if (value == null || value.length() == 0) {
 				return FormValidation.error("Please input your report path");
 			}
-			if (!FileUtils.existFile(value) || !(new File(value).isDirectory()))
-				return FormValidation.error("The report path can't be found.");
+			if(!(value.contains("${")&&value.contains("}"))) {
+				if (!FileUtils.existFile(value) || !(new File(value).isDirectory()))
+					return FormValidation.error("The report path can't be found.");
+			}
 			return FormValidation.ok();
 		}
 

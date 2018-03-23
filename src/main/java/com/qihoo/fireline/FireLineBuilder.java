@@ -10,6 +10,7 @@ import hudson.model.Action;
 import hudson.model.Computer;
 import hudson.model.JDK;
 import hudson.model.Node;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.Builder;
@@ -20,13 +21,21 @@ import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
+import org.w3c.dom.Document;
+
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.qihoo.utils.BuilderUtils;
 import com.qihoo.utils.FileUtils;
 import com.qihoo.utils.VariableReplacerUtil;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,10 +49,12 @@ import java.util.Map;
  */
 public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private final FireLineTarget fireLineTarget;
+	private String config;
+	private String reportPath;
 	private String jdk;
 	private static String jarFile = "/lib/firelineJar.jar";
 	public final static String platform = System.getProperty("os.name");
-	
+
 	@DataBoundConstructor
 	public FireLineBuilder(@CheckForNull FireLineTarget fireLineTarget) {
 		this.fireLineTarget = fireLineTarget;
@@ -69,6 +80,12 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		String jarPath = null;
 		String buildWithParameter = fireLineTarget.getBuildWithParameter();
 		buildWithParameter = VariableReplacerUtil.preludeWithBuild(build, listener, buildWithParameter);
+		reportFileNameTmp = VariableReplacerUtil.preludeWithBuild(build, listener, reportFileNameTmp);
+		config=VariableReplacerUtil.preludeWithBuild(build,listener,fireLineTarget.getConfiguration());
+		reportPath=VariableReplacerUtil.preludeWithBuild(build, listener, fireLineTarget.getReportPath());
+		if (!FileUtils.existFile(reportPath) || !(new File(reportPath).isDirectory())) {
+			reportPath=FileUtils.defaultReportPath();
+		}
 		jdk = fireLineTarget.getJdk();
 		// add actions
 		fireLineTarget.handleAction(build);
@@ -79,19 +96,16 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		// check params
 		if (!FileUtils.existFile(projectPath))
 			listener.getLogger().println("The path of project ：" + projectPath + "can't be found.");
-
 		// 报告路径不存在时，创建该路径
-		checkReportPath(fireLineTarget.getReportPath());
+		checkReportPath(reportPath);
 		String cmd = "java " + fireLineTarget.getJvm() + " -jar " + jarPath + " -s=" + projectPath + " -r="
-				+ fireLineTarget.getReportPath() + " reportFileName=" + reportFileNameTmp;
+				+ reportPath + " reportFileName=" + reportFileNameTmp;
 
-		if (fireLineTarget.getConfiguration() != null) {
-			File conf = new File(fireLineTarget.getConfiguration());
+		if (config != null) {
+			File conf = new File(config);
 			if (conf.exists() && !conf.isDirectory())
-				cmd = cmd + " config=" + fireLineTarget.getConfiguration();
+				cmd = cmd + " config=" + config;
 		}
-		// listener.getLogger().println("----------Scan--------" +
-		// fireLineTarget.getNotScan());
 		if (buildWithParameter != null && buildWithParameter.contains("false")) {
 			listener.getLogger().println("Build without FireLine !!!");
 		} else {
@@ -101,7 +115,16 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 				// execute fireline
 				listener.getLogger().println("FireLine start scanning...");
 				exeCmd(cmd, listener);
-				listener.getLogger().println("FireLine report path: " + fireLineTarget.getReportPath());
+				// if block number of report is not 0,then this build is set Failure.
+				if(fireLineTarget.getBlockBuild()) {
+					if (getBlockNum(reportPath, reportFileNameTmp) != 0) {
+						
+						build.setResult(Result.FAILURE);
+						listener.getLogger().println(
+								"[ERROR] There are some defects of \"Block\" level and FireLine set build result to FAILURE");
+					}
+				}
+				listener.getLogger().println("FireLine report path: " + reportPath);
 			} else {
 				listener.getLogger().println("fireline.jar does not exist!!");
 			}
@@ -129,6 +152,29 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 				p.destroy();
 			}
 		}
+	}
+
+	private int getBlockNum(String reportPath, String reportFileName) {
+		String xmlPath = null;
+		DocumentBuilderFactory foctory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder;
+		if (reportFileName != null && reportPath != null) {
+			xmlPath = reportPath + java.io.File.separator + reportFileName + ".xml";
+			try {
+				builder = foctory.newDocumentBuilder();
+				Document doc = builder.parse(new File(xmlPath));
+				NodeList nodeLists = doc.getElementsByTagName("blocknum");
+				if (nodeLists != null && nodeLists.getLength() > 0) {
+					org.w3c.dom.Node node = nodeLists.item(0);
+					if (node != null)
+						return Integer.parseInt(node.getTextContent());
+				}
+			} catch (ParserConfigurationException | SAXException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return 0;
 	}
 
 	private String getFireLineJar(TaskListener listener) {

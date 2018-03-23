@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.jenkins-ci.plugins.plugin</groupId>
 	<artifactId>fireline</artifactId>
-	<version>1.4.84-SNAPSHOT</version>
+	<version>1.4.90-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 
 	<properties>
@@ -27,7 +27,7 @@
 			Maven plugin version required by the plugin. -->
 	</properties>
 
-	<name>FireLine Plugin</name>
+	<name>360 FireLine Plugin</name>
 	<description>FireLine Plugin is a code analysis tool for Android or Java code.It can detect Security and Resource Leak bugs. Alibaba Java Coding Guidelines (P3C) is compatible in recent release. </description>
 	<url>https://wiki.jenkins.io/display/JENKINS/FireLine+Plugin</url>
 
