@@ -57,9 +57,6 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 
 	@DataBoundConstructor
 	public FireLineBuilder(@CheckForNull FireLineTarget fireLineTarget) {
-		if(fireLineTarget.getCsp()) {
-			initEnv();
-		}
 		this.fireLineTarget = fireLineTarget;
 	}
 
@@ -76,6 +73,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	@Override
 	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
 			throws InterruptedException, IOException {
+		if(fireLineTarget.getCsp()) {
+			initEnv();
+		}
 		EnvVars env = BuilderUtils.getEnvAndBuildVars(build, listener);
 		String projectPath = workspace.getRemote();
 		String reportFileNameTmp = fireLineTarget.getReportFileName().substring(0,
