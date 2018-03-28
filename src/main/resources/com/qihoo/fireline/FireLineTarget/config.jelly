@@ -19,6 +19,10 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	<f:entry field="blockBuild" title="Block问题控制构建状态:&lt;br / &gt;(If Block rules make build fail)">
 		<f:booleanRadio default="false"/>
 	</f:entry>
+	<!--SetCSP-->
+	<f:entry field="csp" title="开通引用JS、CSS的HTML页面访问权限:&lt;br / &gt;(Open access to HTML with JS or CSS)">
+		<f:booleanRadio default="false"/>
+	</f:entry>
 	<!--Configuration-->
 	<f:entry field="configuration" title="规则配置信息:&lt;br / &gt;(Rule configuration content)">
 		<f:textarea />

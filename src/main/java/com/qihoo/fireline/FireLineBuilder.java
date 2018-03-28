@@ -57,6 +57,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 
 	@DataBoundConstructor
 	public FireLineBuilder(@CheckForNull FireLineTarget fireLineTarget) {
+		if(fireLineTarget.getCsp()) {
+			initEnv();
+		}
 		this.fireLineTarget = fireLineTarget;
 	}
 
@@ -83,6 +86,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		reportFileNameTmp = VariableReplacerUtil.preludeWithBuild(build, listener, reportFileNameTmp);
 		config=VariableReplacerUtil.preludeWithBuild(build,listener,fireLineTarget.getConfiguration());
 		reportPath=VariableReplacerUtil.preludeWithBuild(build, listener, fireLineTarget.getReportPath());
+		if(fireLineTarget.getCsp()) {
+			listener.getLogger().println("CSP="+System.getProperty("hudson.model.DirectoryBrowserSupport.CSP"));
+		}
 		if (!FileUtils.existFile(reportPath) || !(new File(reportPath).isDirectory())) {
 			reportPath=FileUtils.defaultReportPath();
 		}
@@ -129,6 +135,10 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 				listener.getLogger().println("fireline.jar does not exist!!");
 			}
 		}
+	}
+	
+	private void initEnv() {
+		System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "sandbox allow-scripts; default-src *; style-src * http://* 'unsafe-inline' 'unsafe-eval'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'");
 	}
 
 	private void exeCmd(String commandStr, TaskListener listener) {

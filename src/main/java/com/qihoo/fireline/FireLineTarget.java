@@ -23,6 +23,7 @@ import hudson.util.FormValidation;
 
 public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 	private final boolean blockBuild;
+	private final boolean csp;
 	private final String configuration;
 	private final String reportPath;
 	private final String reportFileName;
@@ -32,7 +33,8 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 	private final String buildWithParameter;
 
 	@DataBoundConstructor
-	public FireLineTarget(boolean blockBuild,String configuration, String reportPath, String reportFileName, String buildWithParameter, String jdk,String jvm) {
+	public FireLineTarget(boolean csp,boolean blockBuild,String configuration, String reportPath, String reportFileName, String buildWithParameter, String jdk,String jvm) {
+		this.csp=csp;
 		this.blockBuild=blockBuild;
 		this.configuration = StringUtils.trim(configuration);
 		this.reportPath = StringUtils.trim(reportPath);
@@ -40,6 +42,10 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 		this.buildWithParameter = buildWithParameter;
 		this.jdk = jdk;
 		this.jvm=StringUtils.trim(jvm);
+	}
+	
+	public boolean getCsp() {
+		return this.csp;
 	}
 	
 	public boolean getBlockBuild() {
