@@ -30,6 +30,7 @@ import com.qihoo.utils.BuilderUtils;
 import com.qihoo.utils.FileUtils;
 import com.qihoo.utils.VariableReplacerUtil;
 
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,13 +55,14 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	private String jdk;
 	private static String jarFile = "/lib/firelineJar.jar";
 	public final static String platform = System.getProperty("os.name");
+	private FireLineScanCodeAction fireLineAction=new FireLineScanCodeAction(); 
 
 	@DataBoundConstructor
-	public FireLineBuilder(@CheckForNull FireLineTarget fireLineTarget) {
+	public FireLineBuilder(@Nonnull FireLineTarget fireLineTarget) {
 		this.fireLineTarget = fireLineTarget;
 	}
 
-	@CheckForNull
+	@Nonnull
 	public FireLineTarget getFireLineTarget() {
 		return this.fireLineTarget;
 	}
@@ -73,6 +75,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	@Override
 	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
 			throws InterruptedException, IOException {
+		if(fireLineTarget==null) {
+			listener.getLogger().println("fireLineTarget is null");
+		}
 		if(fireLineTarget.getCsp()) {
 			initEnv();
 		}
@@ -94,7 +99,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		}
 		jdk = fireLineTarget.getJdk();
 		// add actions
-		fireLineTarget.handleAction(build);
+		build.addAction(fireLineAction);
 		// Set JDK version
 		computeJdkToUse(build, workspace, listener, env);
 		// get path of fireline.jar
@@ -120,6 +125,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			if (new File(jarPath).exists()) {
 				// execute fireline
 				listener.getLogger().println("FireLine start scanning...");
+				listener.getLogger().println("FireLine command="+cmd);
 				exeCmd(cmd, listener);
 				// if block number of report is not 0,then this build is set Failure.
 				if(fireLineTarget.getBlockBuild()) {
@@ -288,9 +294,10 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 	}
 
 	@Override
-	public Action getProjectAction(AbstractProject<?, ?> project) {
-		return fireLineTarget.getProjectAction();
+	public Action getProjectAction(AbstractProject<?, ?> project){
+		return fireLineAction;
 	}
+	
 
 	@Extension
 	public static class DescriptorImpl extends BuildStepDescriptor<Builder> {

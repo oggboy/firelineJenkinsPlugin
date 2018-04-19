@@ -2,11 +2,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-<!--
-<f:invisibleEntry title="本次构建是否使用火线扫描：&lt;br / &gt;(Whether to analysis code with FireLine)" field="notScan">
-	<f:checkbox title="不使用/Disable"/>
-</f:invisibleEntry>
--->
 <f:entry title="结果报告路径:&lt;br / &gt;(Report path)" field="reportPath">
     <f:textbox default="${descriptor.defaultReportPath()}"/>
 </f:entry>
@@ -21,7 +16,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	</f:entry>
 	<!--SetCSP-->
 	<f:entry field="csp" title="开通引用JS、CSS的HTML页面访问权限:&lt;br / &gt;(Open access to HTML with JS or CSS)">
-		<f:booleanRadio default="false"/>
+		<f:booleanRadio default="true"/>
 	</f:entry>
 	<!--Configuration-->
 	<f:entry field="configuration" title="规则配置信息:&lt;br / &gt;(Rule configuration content)">
