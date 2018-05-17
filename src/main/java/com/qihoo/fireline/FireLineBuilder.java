@@ -77,9 +77,10 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			throws InterruptedException, IOException {
 		if(fireLineTarget==null) {
 			listener.getLogger().println("fireLineTarget is null");
-		}
-		if(fireLineTarget.getCsp()) {
-			initEnv();
+		}else {
+			if(fireLineTarget.getCsp()) {
+				initEnv();
+			}
 		}
 		EnvVars env = BuilderUtils.getEnvAndBuildVars(build, listener);
 		String projectPath = workspace.getRemote();
