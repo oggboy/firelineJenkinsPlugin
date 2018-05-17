@@ -81,7 +81,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			if(fireLineTarget.getCsp()) {
 				initEnv();
 			}
-		}
+		
 		EnvVars env = BuilderUtils.getEnvAndBuildVars(build, listener);
 		String projectPath = workspace.getRemote();
 		String reportFileNameTmp = fireLineTarget.getReportFileName().substring(0,
@@ -141,6 +141,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			} else {
 				listener.getLogger().println("fireline.jar does not exist!!");
 			}
+		}
 		}
 	}
 	
