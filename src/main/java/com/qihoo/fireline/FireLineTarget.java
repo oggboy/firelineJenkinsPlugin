@@ -142,12 +142,12 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 		}
 	}
 	
-	public void handleAction(Run<?,?> build) {
+	/*public void handleAction(Run<?,?> build) {
 //		System.out.println("--------------------handleAction-----------------");
 		build.addAction(getProjectAction());
 	}
 	
 	public Action getProjectAction() {
 		return new FireLineScanCodeAction();
-	}
+	}*/
 }
