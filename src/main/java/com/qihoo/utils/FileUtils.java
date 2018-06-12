@@ -1,10 +1,16 @@
 package com.qihoo.utils;
 
-import java.io.File;
-import java.io.InputStream;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import java.io.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 public class FileUtils {
 	public static boolean existFile(String filename) {
@@ -100,6 +106,44 @@ public class FileUtils {
 			return false;
 		}catch (Exception e) {
 			return false;
+		}
+	}
+
+	public static void createXml(File file, String value) {
+		InputStream in=StringUtils.strToStream(value);
+		TransformerFactory tf = TransformerFactory.newInstance();
+		PrintWriter pw = null;
+		try {
+			DocumentBuilderFactory foctory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = foctory.newDocumentBuilder();
+			Document doc = builder.parse(in);
+			Transformer transformer = tf.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file),"utf-8"));
+			StreamResult result = new StreamResult(pw);
+			transformer.transform(source, result);
+		} catch (TransformerConfigurationException e) {
+			System.out.println(e.getMessage());
+		} catch (IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+		} catch (FileNotFoundException e) {
+			System.out.println(e.getMessage());
+		} catch (TransformerException e) {
+			System.out.println(e.getMessage());
+		} catch (UnsupportedEncodingException e){
+			System.out.println(e.getMessage());
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} finally {
+			if (pw!=null) {
+				pw.close();
+			}
 		}
 	}
 
