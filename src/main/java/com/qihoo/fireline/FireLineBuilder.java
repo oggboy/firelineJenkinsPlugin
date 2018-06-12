@@ -114,9 +114,11 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 				+ reportPath + " reportFileName=" + reportFileNameTmp;
 
 		if (config != null) {
-			File conf = new File(config);
-			if (conf.exists() && !conf.isDirectory())
-				cmd = cmd + " config=" + config;
+			File confFile = new File(reportPath+File.separator+"config.xml");
+            FileUtils.createXml(confFile,config);
+			if (confFile.exists() && !confFile.isDirectory()){
+                cmd = cmd + " config=" + confFile;
+            }
 		}
 		if (buildWithParameter != null && buildWithParameter.contains("false")) {
 			listener.getLogger().println("Build without FireLine !!!");
