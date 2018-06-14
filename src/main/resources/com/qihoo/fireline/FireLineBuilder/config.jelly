@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
 		 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
  
-<f:entry title="静态代码扫描工具——火线（FireLine）" description="火线是一种支持Android和Java的静态代码扫描工具，支持安全和资源泄露规则的检查。最新版本已经兼容阿里巴巴Java代码规范（P3C）。&lt;br / &gt;FireLine Plugin is a code analysis tool for Android or Java code.It can detect Security and Resource Leak bugs. Alibaba Java Coding Guidelines (P3C) is compatible in recent release. &lt;br / &gt;">
+<f:entry title="静态代码扫描工具——火线（FireLine）" description="火线是一款支持Android和Java的静态代码扫描工具，支持安全和资源泄露规则的检查。最新版本已经兼容阿里巴巴Java代码规范（P3C）。&lt;br / &gt;FireLine Plugin is a code analysis tool for Android or Java code.It can detect Security and Resource Leak bugs. Alibaba Java Coding Guidelines (P3C) is compatible in recent release. &lt;br / &gt;">
 </f:entry>
 <f:entry  field="fireLineTarget">
    <f:property />

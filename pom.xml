@@ -28,7 +28,7 @@
 	</properties>
 
 	<name>360 FireLine Plugin</name>
-	<description>FireLine Plugin is a code analysis tool for Android or Java code.It can detect Security and Resource Leak bugs. Alibaba Java Coding Guidelines (P3C) is compatible in recent release. </description>
+	<description>火线是一款支持Android和Java的静态代码扫描工具，支持安全和资源泄露规则的检查。最新版本已经兼容阿里巴巴Java代码规范（P3C）</description>
 	<url>https://wiki.jenkins.io/display/JENKINS/FireLine+Plugin</url>
 
 	<!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for 
@@ -43,9 +43,9 @@
 
 	<developers>
 		<developer>
-			<id>AnneWei</id>
-			<name>AnneWei</name>
-			<email>1272458116@qq.com</email>
+			<id>oggboy</id>
+			<name>丁老九</name>
+			<email>353961709@qq.com</email>
 		</developer>
 	</developers>
 
