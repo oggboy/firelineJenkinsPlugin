@@ -41,7 +41,7 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 		this.reportFileName = StringUtils.trim(reportFileName);
 		this.buildWithParameter = buildWithParameter;
 		this.jdk = jdk;
-		this.jvm=StringUtils.trim(jvm);
+		this.jvm = jvm;
 	}
 	
 	public boolean getCsp() {
@@ -71,10 +71,15 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 	public String getJdk() {
 		return jdk != null && !jdk.isEmpty() ? jdk : "(Inherit From Job)";
 	}
-	
-	public String getJvm() {
-		return jvm!=null&&!jvm.isEmpty()?jvm:"-Xms1g -Xmx1g -XX:MaxPermSize=512m";
-	}
+    public String getJvm() {
+	    if (null==this.jvm|| this.jvm.isEmpty()){
+            return null;
+        }
+        return this.jvm;
+    }
+//	public String getJvm() {
+//		return jvm!=null&&!jvm.isEmpty()?jvm:"-Xms1g -Xmx1g -XX:MaxPermSize=512m";
+//	}
 
 	@Extension
 	public static class DescriptorImpl extends Descriptor<FireLineTarget> {
@@ -122,12 +127,12 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 //			return FormValidation.error("JDK1.7 or 1.8 is compatible with FireLine.");
 		}
 		
-		public FormValidation doCheckJvm(@QueryParameter String value) {
-			if (value == null || value.length() == 0) {
-				return FormValidation.error("Please input JVM parameter.");
-			}
-			return FormValidation.ok();
-		}
+//		public FormValidation doCheckJvm(@QueryParameter String value) {
+//			if (value == null || value.length() == 0) {
+//				return FormValidation.error("Please input JVM parameter.");
+//			}
+//			return FormValidation.ok();
+//		}
 		public FormValidation doCheckBuildWithParameter(@QueryParameter String value) {
 			if(value!=null&&value.length()>0) {
 				if(!(value.substring(0, 2).equals("${")&&value.charAt(value.length()-1)=='}')){

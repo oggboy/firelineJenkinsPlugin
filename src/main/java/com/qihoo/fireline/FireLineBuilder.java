@@ -87,6 +87,7 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		String reportFileNameTmp = fireLineTarget.getReportFileName().substring(0,
 				fireLineTarget.getReportFileName().lastIndexOf("."));
 		String jarPath = null;
+        String cmd = null;
 		String buildWithParameter = fireLineTarget.getBuildWithParameter();
 		buildWithParameter = VariableReplacerUtil.preludeWithBuild(build, listener, buildWithParameter);
 		reportFileNameTmp = VariableReplacerUtil.preludeWithBuild(build, listener, reportFileNameTmp);
@@ -110,9 +111,13 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			listener.getLogger().println("The path of project ：" + projectPath + "can't be found.");
 		// 报告路径不存在时，创建该路径
 		checkReportPath(reportPath);
-		String cmd = "java " + fireLineTarget.getJvm() + " -jar " + jarPath + " -s=" + projectPath + " -r="
-				+ reportPath + " reportFileName=" + reportFileNameTmp;
-
+		if (fireLineTarget.getJvm()!=null){
+            cmd = "java " + fireLineTarget.getJvm() + " -jar " + jarPath + " -s=" + projectPath + " -r="
+                    + reportPath + " reportFileName=" + reportFileNameTmp;
+        }else{
+            cmd = "java " + " -jar " + jarPath + " -s=" + projectPath + " -r="
+                    + reportPath + " reportFileName=" + reportFileNameTmp;
+        }
 		if (config != null) {
 			File confFile = new File(reportPath+File.separator+"config.xml");
             FileUtils.createXml(confFile,config);
@@ -186,8 +191,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 				NodeList nodeLists = doc.getElementsByTagName("blocknum");
 				if (nodeLists != null && nodeLists.getLength() > 0) {
 					org.w3c.dom.Node node = nodeLists.item(0);
-					if (node != null)
-						return Integer.parseInt(node.getTextContent());
+					if (node != null){
+                        return Integer.parseInt(node.getTextContent());
+                    }
 				}
 			} catch (ParserConfigurationException | SAXException | IOException e) {
 				// TODO Auto-generated catch block
@@ -262,8 +268,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			// just in case we are not in a build
 			if (computer != null) {
 				Node node = computer.getNode();
-				if (node != null)
-					jdkToUse = jdkToUse.forNode(computer.getNode(), listener);
+				if (node != null){
+                    jdkToUse = jdkToUse.forNode(computer.getNode(), listener);
+                }
 			}
 			jdkToUse.buildEnvVars(env);
 		}

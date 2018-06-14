@@ -3,5 +3,5 @@
   This view is used to render the installed plugins page.
 -->
 <div>
-  FireLine Plugin is a code analysis tool for Android or Java code.It can detect Security and Resource Leak bugs. Alibaba Java Coding Guidelines (P3C) is compatible in recent release. 
+  火线是一种支持Android和Java的静态代码扫描工具，支持安全和资源泄露规则的检查。最新版本已经兼容阿里巴巴Java代码规范（P3C）。
 </div>
