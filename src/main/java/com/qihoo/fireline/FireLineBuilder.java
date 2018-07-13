@@ -101,7 +101,9 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		}
 		jdk = fireLineTarget.getJdk();
 		// add actions
-		build.addAction(fireLineAction);
+        if(null!=fireLineAction){
+            build.addAction(fireLineAction);
+        }
 		// Set JDK version
 		computeJdkToUse(build, workspace, listener, env);
 		// get path of fireline.jar
