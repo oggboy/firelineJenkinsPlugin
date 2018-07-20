@@ -49,25 +49,26 @@ public class FileUtils {
 		// path.delete();
 	}
 
-	public static boolean createDir(String directory) {
-
-		File dir = new File(directory);
-		try {
-			if (dir.exists()) {
-				// System.out.println("*************File is null "+dir);
-				return false;
-			} else {
-				try {
-					return dir.mkdir();
-				} catch (Exception e) {
-					// TODO: handle exception
-				}
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
+	public static boolean createDir(String destDirName) {
+		if (destDirName == null){
+			return false;
 		}
-		return false;
+        File dir = new File(destDirName);
+        if (dir.exists()) {
+            System.out.println("目标目录已经存在");
+            return true;
+        }
+        if (!destDirName.endsWith(File.separator)) {
+            destDirName = destDirName + File.separator;
+        }
+        //创建目录
+        if (dir.mkdirs()) {
+            System.out.println("创建目录" + destDirName + "成功！");
+            return true;
+        } else {
+            System.out.println("创建目录" + destDirName + "失败！");
+            return false;
+        }
 	}
 
 	public static String defaultReportPath() {

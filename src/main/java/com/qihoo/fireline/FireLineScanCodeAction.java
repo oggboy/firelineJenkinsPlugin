@@ -19,8 +19,9 @@ public class FireLineScanCodeAction implements ProminentProjectAction {
 			PluginManager pluginManager = jenkins.getPluginManager();
 			if (pluginManager != null) {
 				PluginWrapper wrapper = pluginManager.getPlugin("fireline");
-				if (wrapper != null)
-					return "/plugin/" + wrapper.getShortName() + "/images/fireLine_48x48.png";
+				if (wrapper != null){
+                    return "/plugin/" + wrapper.getShortName() + "/images/fireLine_48x48.png";
+                }
 			}
 		}
 		return null;

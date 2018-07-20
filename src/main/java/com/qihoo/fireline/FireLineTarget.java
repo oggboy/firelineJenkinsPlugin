@@ -104,8 +104,9 @@ public class FireLineTarget extends AbstractDescribableImpl<FireLineTarget> {
 				return FormValidation.error("Please input your report path");
 			}
 			if(!(value.contains("${")&&value.contains("}"))) {
-				if (!FileUtils.existFile(value) || !(new File(value).isDirectory()))
+				if (!FileUtils.existFile(value) || !(new File(value).isDirectory())){
 					return FormValidation.error("The report path can't be found.");
+				}
 			}
 			return FormValidation.ok();
 		}
