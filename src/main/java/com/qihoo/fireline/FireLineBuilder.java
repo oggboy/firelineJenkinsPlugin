@@ -89,15 +89,17 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		String jarPath = null;
         String cmd = null;
 		String buildWithParameter = fireLineTarget.getBuildWithParameter();
-		buildWithParameter = VariableReplacerUtil.preludeWithBuild(build, listener, buildWithParameter);
-		reportFileNameTmp = VariableReplacerUtil.preludeWithBuild(build, listener, reportFileNameTmp);
-		config=VariableReplacerUtil.preludeWithBuild(build,listener,fireLineTarget.getConfiguration());
-		reportPath=VariableReplacerUtil.preludeWithBuild(build, listener, fireLineTarget.getReportPath());
-		if(fireLineTarget.getCsp()) {
+		buildWithParameter = VariableReplacerUtil.checkEnvVars(build,listener,buildWithParameter);
+		reportFileNameTmp = VariableReplacerUtil.checkEnvVars(build, listener, reportFileNameTmp);
+		config=fireLineTarget.getConfiguration();
+		reportPath=VariableReplacerUtil.checkEnvVars(build, listener, fireLineTarget.getReportPath());
+		//listener.getLogger().println("reportPath="+reportPath);
+		boolean IsExist=FileUtils.createDir(reportPath);
+		if (!IsExist){
+            listener.getLogger().println("结果报告路径创建失败，请确认当前Jenkins用户的权限");
+        }
+        if(fireLineTarget.getCsp()) {
 			listener.getLogger().println("CSP="+System.getProperty("hudson.model.DirectoryBrowserSupport.CSP"));
-		}
-		if (!FileUtils.existFile(reportPath) || !(new File(reportPath).isDirectory())) {
-			reportPath=FileUtils.defaultReportPath();
 		}
 		jdk = fireLineTarget.getJdk();
 		// add actions
@@ -109,10 +111,10 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 		// get path of fireline.jar
 		jarPath = getFireLineJar(listener);
 		// check params
-		if (!FileUtils.existFile(projectPath))
+		if (!FileUtils.existFile(projectPath)){
 			listener.getLogger().println("The path of project ：" + projectPath + "can't be found.");
-		// 报告路径不存在时，创建该路径
-		checkReportPath(reportPath);
+		}
+
 		if (fireLineTarget.getJvm()!=null){
             cmd = "java " + fireLineTarget.getJvm() + " -jar " + jarPath + " -s=" + projectPath + " -r="
                     + reportPath + " reportFileName=" + reportFileNameTmp;
@@ -226,22 +228,6 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			e.printStackTrace();
 		}
 		return newPath;
-	}
-
-	private void checkReportPath(String path) {
-		if (path != null && path.length() > 0) {
-			File filePath = new File(path);
-			if (filePath.exists() && filePath.isDirectory()) {
-
-			} else {
-				try {
-					filePath.mkdirs();
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 
 	public static String getMemUsage() {

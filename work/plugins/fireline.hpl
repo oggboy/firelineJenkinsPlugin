@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Group-Id: org.jenkins-ci.plugins.plugin
+Short-Name: fireline
+Long-Name: 360 FireLine Plugin
+Url: https://wiki.jenkins.io/display/JENKINS/FireLine+Plugin
+Plugin-Version: 1.5.11-SNAPSHOT (private-4f1b8c91-yuanwei3-iri)
+Hudson-Version: 1.625.3
+Jenkins-Version: 1.625.3
+Plugin-Developers: ¶¡ÀÏ¾Å:oggboy:353961709@qq.com
+Libraries: D:\git\fireline-plugin\src\main\resources,D:\git\fireline-p
+ lugin\target\classes
+Resource-Path: D:\git\fireline-plugin\src\main\webapp
+
