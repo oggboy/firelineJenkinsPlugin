@@ -54,7 +54,7 @@
 		<connection>scm:git:git://github.com/jenkinsci/fireline-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:jenkinsci/fireline-plugin.git</developerConnection>
 		<url>http://github.com/jenkinsci/fireline-plugin</url>
-		<tag>fireline-1.5.14</tag>
+		<tag>fireline-1.5.17</tag>
 	</scm>
 
 	<repositories>
