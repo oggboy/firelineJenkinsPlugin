@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/target/jenkins-for-test/WEB-INF/WEB-INF.iml" filepath="$PROJECT_DIR$/target/jenkins-for-test/WEB-INF/WEB-INF.iml" />
       <module fileurl="file://$PROJECT_DIR$/fireline.iml" filepath="$PROJECT_DIR$/fireline.iml" />
+      <module fileurl="file://$PROJECT_DIR$/target/checkout/target/generated-test-sources/generated-test-sources.iml" filepath="$PROJECT_DIR$/target/checkout/target/generated-test-sources/generated-test-sources.iml" />
+      <module fileurl="file://$PROJECT_DIR$/target/generated-test-sources/generated-test-sources1.iml" filepath="$PROJECT_DIR$/target/generated-test-sources/generated-test-sources1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/main/main.iml" filepath="$PROJECT_DIR$/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/target/checkout/src/main/main1.iml" filepath="$PROJECT_DIR$/target/checkout/src/main/main1.iml" />
     </modules>
   </component>
 </project>
