@@ -136,8 +136,8 @@ public class FireLineBuilder extends Builder implements SimpleBuildStep {
 			// if (checkFireLineJdk(getProject(build).getJDK())) {
 			if (new File(jarPath).exists()) {
 				// execute fireline
+				listener.getLogger().println("FireLine command="+cmd);
 				listener.getLogger().println("FireLine start scanning...");
-				//listener.getLogger().println("FireLine command="+cmd);
 				exeCmd(cmd, listener);
 				// if block number of report is not 0,then this build is set Failure.
 				if(fireLineTarget.getBlockBuild()) {
