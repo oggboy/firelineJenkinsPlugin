@@ -10,11 +10,11 @@
 	</parent>
 	<groupId>org.jenkins-ci.plugins.plugin</groupId>
 	<artifactId>fireline</artifactId>
-	<version>1.7.1</version>
+	<version>1.7.1-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 
 	<properties>
-		<!-- Baseline Jenkins version you use to build the plugin. Users must have 
+		<!-- Baseline Jenkins version you use to build the plugin. Users must have
 			this version or newer to run. -->
 		<jenkins.version>1.625.3</jenkins.version>
 		<!-- Java Level to use. Java 7 required when using core >= 1.612 -->
@@ -22,8 +22,8 @@
 		<!-- Jenkins Test Harness version you use to test the plugin. -->
 		<!-- For Jenkins version >= 1.580.1 use JTH 2.x or higher. -->
 		<jenkins-test-harness.version>2.13</jenkins-test-harness.version>
-		<!-- Other properties you may want to use: ~ hpi-plugin.version: The HPI 
-			Maven Plugin version used by the plugin.. ~ stapler-plugin.version: The Stapler 
+		<!-- Other properties you may want to use: ~ hpi-plugin.version: The HPI
+			Maven Plugin version used by the plugin.. ~ stapler-plugin.version: The Stapler
 			Maven plugin version required by the plugin. -->
 	</properties>
 
@@ -31,7 +31,7 @@
 	<description>火线是一款支持Android和Java的静态代码扫描工具，支持安全和资源泄露规则的检查。最新版本已经兼容阿里巴巴Java代码规范（P3C）</description>
 	<url>https://wiki.jenkins.io/display/JENKINS/FireLine+Plugin</url>
 
-	<!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for 
+	<!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for
 		the applicable one if needed. -->
 
 	<licenses>
@@ -54,7 +54,7 @@
 		<connection>scm:git:git://github.com/jenkinsci/fireline-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:jenkinsci/fireline-plugin.git</developerConnection>
 		<url>http://github.com/jenkinsci/fireline-plugin</url>
-		<tag>fireline-1.7.1</tag>
+		<tag>fireline-1.6.18</tag>
 	</scm>
 
 	<repositories>
