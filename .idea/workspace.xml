@@ -45,7 +45,7 @@
         <counts>
           <entry key="IDEA_MODULE" value="2" />
           <entry key="JAVA" value="9" />
-          <entry key="PLAIN_TEXT" value="12" />
+          <entry key="PLAIN_TEXT" value="13" />
           <entry key="Properties" value="5" />
           <entry key="XML" value="2" />
         </counts>
@@ -82,19 +82,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
+        <entry file="file://$PROJECT_DIR$/pom.xml.releaseBackup">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="625">
-              <caret line="25" column="7" lean-forward="true" selection-start-line="25" selection-start-column="7" selection-end-line="25" selection-end-column="7" />
+            <state relative-caret-position="475">
+              <caret line="31" column="54" lean-forward="true" selection-end-line="76" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml.releaseBackup">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="30" column="38" lean-forward="true" selection-end-line="76" />
+            <state relative-caret-position="625">
+              <caret line="25" column="7" lean-forward="true" selection-start-line="25" selection-start-column="7" selection-end-line="25" selection-end-column="7" />
             </state>
           </provider>
         </entry>
@@ -267,7 +267,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1565611444483" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1565612191973" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../TestCasesProject" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
@@ -424,8 +424,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml.releaseBackup">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="30" column="38" lean-forward="true" selection-end-line="76" />
+        <state relative-caret-position="475">
+          <caret line="31" column="54" lean-forward="true" selection-end-line="76" />
         </state>
       </provider>
     </entry>
