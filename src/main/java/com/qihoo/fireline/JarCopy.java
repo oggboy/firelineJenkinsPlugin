@@ -29,13 +29,12 @@ public class JarCopy {
 			}			
 		}
 		
-		if (d.exists()) {
-			if(!d.delete())
-				System.out.println("Fail to delete file.");
-			;
-		}
-		InputStream stream = null;
-        OutputStream resStreamOut = null;
+		if (!d.exists()) {
+//			if(!d.delete()){
+//				System.out.println("Fail to delete file.");
+//			}
+			InputStream stream = null;
+			OutputStream resStreamOut = null;
 
 			try {
 	            stream = JarCopy.class.getResourceAsStream(oldPath);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
@@ -66,12 +65,7 @@ public class JarCopy {
 	        		resStreamOut.close();
 				}
 	            
-	        }		
+	        }
+		}
 	}
-	
-	
-	
-        
-        
-
 }
